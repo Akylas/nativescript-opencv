@@ -1,4 +1,4 @@
-module OpenCV {
+framework module OpenCV {
     umbrella header "opencv.hpp"
     
     export *
