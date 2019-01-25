@@ -1,4 +1,4 @@
 module OpenCV {
-    umbrella "./"
+    umbrella "opencv.hpp"
     export *
 }
