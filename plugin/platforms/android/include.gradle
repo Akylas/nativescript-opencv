@@ -1,0 +1,6 @@
+android {
+}
+
+ dependencies {
+    implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.4.4'
+  }

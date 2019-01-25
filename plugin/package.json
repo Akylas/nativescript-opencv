@@ -1,0 +1,43 @@
+{
+    "name": "nativescript-opencv",
+    "version": "0.0.1",
+    "description": "Nativescript OpenCV plugin.",
+    "main": "./opencv",
+    "typings": "./opencv.d.ts",
+    "scripts": {
+        "postinstall": "node postinstall.js",
+        "preuninstall": "node preuninstall.js"
+    },
+    "nativescript": {
+        "platforms": {
+            "android": "3.0.0",
+            "ios": "3.0.0"
+        },
+        "hooks": [
+            {
+                "type": "after-prepare",
+                "script": "scripts/after-prepare.js",
+                "inject": true
+            }
+        ]
+    },
+    "keywords": [
+        "NativeScript",
+        "JavaScript",
+        "Android",
+        "iOS"
+    ],
+    "author": {
+        "name": "Martin Guillon",
+        "email": "martin@akylas.fr"
+    },
+    "bugs": {
+        "url": "https://github.com/Akylas/nativescript-imopencvage/issues"
+    },
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/Akylas/nativescript-opencv",
+    "readmeFilename": "README.md",
+    "dependencies": {
+        "nativescript-hook": "0.2.4"
+    }
+}
