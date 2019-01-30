@@ -4,8 +4,8 @@
     "scripts": {
         "tsc": "tsc -skipLibCheck && cp src/opencv.d.ts plugin",
         "build.wrappers": "npm i && npm run tsc",
-        "build.android": "bash ../publish/build-android.sh",
-        "build.ios": "bash ../publish/build-ios.sh",
+        "build.android": "bash src-native/android/build.sh",
+        "build.ios": "bash src-native/ios/build.sh",
         "build.native": "npm run build.android && npm run build.ios",
         "build": "npm run build.wrappers && npm run build.native",
         "demo.ios": "npm i && npm run tsc && cd demo && tns run ios",
