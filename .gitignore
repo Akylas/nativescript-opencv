@@ -8,7 +8,7 @@ package-lock.json
 npm-debug.log.*
 demo*/app/**/*.js
 demo*/typings
-
+*.framework
 **/*.js.map
 src/**/*.js
 plugin/**/*.js

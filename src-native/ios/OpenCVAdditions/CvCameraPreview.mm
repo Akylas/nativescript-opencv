@@ -70,17 +70,17 @@
 - (void)processImage:(cv::Mat&)image
 {
 //  cv::Size size = image.size();
-//  
+//
 //  double ratio = size.height / 500.0f;
 //  // const ratio = 1;
 //  int height = round(size.height / ratio);
 //  int width = round(size.width / ratio);
-//  
+//
 //  cv::Mat resizedImage(height, width, CV_8UC4);
 //  cv::Mat grayImage(height, width, CV_8UC4);
 //  cv::Mat cannedImage(height, width, CV_8UC1);
 //  // console.log('testImage4', cannedImage.size());
-//  
+//
 //  cv::resize(image, resizedImage, cv::Size(width, height));
 //  cv::cvtColor(resizedImage, grayImage, cv::COLOR_RGBA2GRAY);
 //  cv::GaussianBlur(grayImage, grayImage, cv::Size(5, 5), 0);
@@ -94,8 +94,10 @@
 //  }
 
   if (self.delegate) {
-    OpenCVMat* mat = [[OpenCVMat alloc] initWithMat:image];
-    [self.delegate processOpenCVMat:(id)mat];
+//    OpenCVMat* mat = [[OpenCVMat alloc] initWithRows:image.rows cols:image.cols type:image.type()];
+//    image.copyTo(*mat.mat);
+    
+    [self.delegate processOpenCVMat:[[OpenCVMat alloc] initWithMat:image]];
   }
 }
 @end

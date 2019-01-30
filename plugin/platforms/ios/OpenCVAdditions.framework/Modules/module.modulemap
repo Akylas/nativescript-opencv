@@ -1,6 +1,0 @@
-framework module OpenCVAdditions {
-  umbrella header "OpenCVAdditions.h"
-
-  export *
-  module * { export * }
-}

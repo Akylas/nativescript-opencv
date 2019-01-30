@@ -103,13 +103,14 @@ export default {
 
         handleImage: _.throttle(function(mat: OpenCVMat) {
             if (isIOS) {
+                // the clone makes the UI slow! No solution right now
                 const nativeDict = NSDictionary.dictionaryWithObjectForKey(mat.clone(), 'mat');
                 const message = {
                     value: { dictionaryPtr: interop.handleof(nativeDict).toNumber() }
                 };
                 // increase reference count to account for `dictionaryPtr`
                 (nativeDict as any).retain();
-                // worker.postMessage(message);
+                worker.postMessage(message);
             }
         }, 100),
         testImage() {

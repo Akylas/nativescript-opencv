@@ -75,7 +75,7 @@ function findAndDrawContours(mat) {
     if (isIOS) {
         console.log('worker onmessage');
         const dict = valueFromPointerNumber(NSDictionary, msg.data.value.dictionaryPtr) as NSDictionary<string, any>;
-        // findAndDrawContours(dict.objectForKey('mat'));
+        findAndDrawContours(dict.objectForKey('mat'));
         // decrease reference count
         (dict as any).release();
     }
