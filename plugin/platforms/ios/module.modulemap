@@ -1,6 +1,5 @@
 framework module OpenCV {
     umbrella header "opencv.hpp"
-    
     export *
     module * { export * }
 }

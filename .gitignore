@@ -13,6 +13,9 @@ demo*/typings
 src/**/*.js
 plugin/**/*.js
 plugin/**/*.d.ts
-
+bin
+build
+Pods
 !plugin/platforms
 /plugin/platforms/android/nativescript_*.aar
+*.xcuserdatad
