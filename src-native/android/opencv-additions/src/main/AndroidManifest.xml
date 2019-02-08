@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.akylas.carto.additions">
+    package="com.nativescript.opencv">
 
     <application
         android:allowBackup="true">

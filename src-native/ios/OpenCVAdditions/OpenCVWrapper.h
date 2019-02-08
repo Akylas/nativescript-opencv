@@ -112,6 +112,16 @@ enum
   OPENCV_64FC3 = CV_64FC3
 };
 
+@interface ContoursVector : NSObject
+
+//-(id)initWithVector:(std::vector<std::vector<cv::Point>> &) vector;
+-(int)size;
+-(std::vector<std::vector<cv::Point>>*)vector;
+-(NSDictionary*)get:(int)i :(int)j;
+-(double)contourArea:(int)index :(BOOL)oriented;
+
+@end
+
 @interface OpenCVWrapper : NSObject
 
 +(void)cvtColor: (OpenCVMat*)mat1 :(OpenCVMat*)mat2 :(int)colorType :(int)dstChannels;
@@ -119,11 +129,11 @@ enum
 +(void)GaussianBlur: (OpenCVMat*)mat1 :(OpenCVMat*)mat2 :(int)x :(int)y :(int)sigmaX;
 +(void)resize: (OpenCVMat*)mat1 :(OpenCVMat*)mat2 :(int)x :(int)y;
 +(void)Canny: (OpenCVMat*)mat1 :(OpenCVMat*)mat2 :(double)threshold1 :(double)threshold2 :(int)apertureSize :(BOOL)L2gradient;
-+(void)findContours: (OpenCVMat*)mat1 :(NSMutableArray*)contours :(OpenCVMat*)hierarchy :(int)mode :(int)method :(CGPoint)offset;
++(ContoursVector*)findContours: (OpenCVMat*)mat1 :(OpenCVMat*)hierarchy :(int)mode :(int)method :(CGPoint)offset;
 + (cv::Mat*)cvMatFromUIImage:(UIImage *)image;
 + (cv::Mat*)cvMatGrayFromUIImage:(UIImage *)image;
 + (UIImage *)UIImageFromCVMat:(cv::Mat&)cvMat;
 +(double)contourArea:(NSArray*)contour :(BOOL)oriented;
-+(void)drawContours:(OpenCVMat*)mat :(NSArray*)contours :(int)contourIdx :(UIColor*)color :(int)thickness :(int)lineType :(OpenCVMat*) hierarchy :(int) maxLevel :(NSDictionary*) offset;
++(void)drawContours:(OpenCVMat*)mat :(ContoursVector*)contours :(int)contourIdx :(UIColor*)color :(int)thickness :(int)lineType :(OpenCVMat*) hierarchy :(int) maxLevel :(NSDictionary*) offset;
 @end
 

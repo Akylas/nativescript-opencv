@@ -13,7 +13,7 @@
 
 @interface OpenCVMat : NSObject
 #ifdef __cplusplus
-@property /*(unsafe_unretained,assign,atomic)*/ cv::Mat * mat;
+//@property /*(unsafe_unretained,assign,atomic)*/ cv::Mat * mat;
 #endif
 - (id)initWithMat:(cv::Mat&) mat;
 - (id)initWithOpenCVMat:(OpenCVMat*)mat;
@@ -25,5 +25,6 @@
 -(UIImage*)toImage;
 -(void)setTo:(UIColor*)color;
 -(OpenCVMat*)clone;
+-(cv::Mat*)mat;
 @end
 

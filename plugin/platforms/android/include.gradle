@@ -1,12 +1,12 @@
 android {
 }
 
-sourceSets {
-    main {
-        java.srcDirs = ['src']
-    }
-}
 
  dependencies {
-    implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.4.4'
+    implementation group: 'org.bytedeco', name: 'javacv', version: '1.4.4'
+    // implementation group: 'org.bytedeco.javacpp-presets', name: 'opencv-platform', version: '3.4.3-1.4.4'
+    implementation group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.3-1.4.4', classifier: 'android-arm'
+    implementation group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.3-1.4.4', classifier: 'android-x86'
+    implementation group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '3.4.3-1.4.4', classifier: 'android-arm'
+    implementation group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '3.4.3-1.4.4', classifier: 'android-x86'
   }

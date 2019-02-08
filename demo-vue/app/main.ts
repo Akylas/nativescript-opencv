@@ -11,11 +11,31 @@ for (const comp of getExamples()) {
 }
 
 Vue.component(views.Home.name, views.Home);
-declare  const OPENCV_8UC4;
-
-console.log('opencv version', opencv.getOpenCVVersion(), opencv.CV_8UC1, OPENCV_8UC4);
-
 // Vue.config.silent = false;
+
+// function range(start, end, inclusive?) {
+//     let mapper = (_, k) => start + k;
+//     if (end < start) {
+//         mapper = (_, k) => start - k;
+//     }
+
+//     return Array.from({ length: Math.abs(start - end) + (inclusive ? 1 : 0) }, mapper);
+// }
+// const expected = range(0, 256);
+// const actual = [];
+
+// const array = (NSArray.arrayWithArray(expected) as any) as any[];
+
+// // array.forEach(x => {
+// //     actual.push(x);
+// // });
+
+// console.log('test', (array as any).count, expected.length, actual);
+
+// for (const x of array) {
+//     actual.push(x);
+// }
+// console.log('test2', expected.length, actual);
 
 new Vue({
     template: `

@@ -1,5 +1,5 @@
 
-package come.nativescript.opencv;
+package com.nativescript.opencv;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -267,19 +267,20 @@ public class CvCameraPreview extends SurfaceView implements SurfaceHolder.Callba
     private void onEnterStartedState() {
         Log.d(LOG_TAG, "call onEnterStartedState");
         /* Connect camera */
-        if (!connectCamera()) {
-            AlertDialog ad = new AlertDialog.Builder(getContext()).create();
-            ad.setCancelable(false); // This blocks the 'BACK' button
-            ad.setMessage("It seems that you device does not support camera (or it is locked). Application will be closed.");
-            ad.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    ((Activity) getContext()).finish();
-                }
-            });
-            ad.show();
-
-        }
+        connectCamera();
+//         if (!connectCamera()) {
+//             AlertDialog ad = new AlertDialog.Builder(getContext()).create();
+//             ad.setCancelable(false); // This blocks the 'BACK' button
+//             ad.setMessage("It seems that you device does not support camera (or it is locked). Application will be closed.");
+//             ad.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+//                 public void onClick(DialogInterface dialog, int which) {
+//                     dialog.dismiss();
+//                     ((Activity) getContext()).finish();
+//                 }
+//             });
+//             ad.show();
+//
+//         }
     }
 
     private void onExitStartedState() {
@@ -343,7 +344,7 @@ public class CvCameraPreview extends SurfaceView implements SurfaceHolder.Callba
         Log.i(LOG_TAG, "onMeasure(): set surface dimension to " + width + "x" + height);
     }
 
-    private boolean connectCamera() {
+    public boolean connectCamera() {
         /* 1. We need to instantiate camera
          * 2. We need to start thread which will be getting frames
          */
@@ -361,7 +362,12 @@ public class CvCameraPreview extends SurfaceView implements SurfaceHolder.Callba
         return true;
     }
 
-    private void disconnectCamera() {
+    public boolean isCameraConnected() {
+        return  thread != null;
+    }
+
+
+    public void disconnectCamera() {
         /* 1. We need to stop thread which updating the frames
          * 2. Stop camera and release it
          */

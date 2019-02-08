@@ -2,5 +2,5 @@ import { booleanConverter, Color, Property, View } from 'tns-core-modules/ui/cor
 import { Image } from 'tns-core-modules/ui/image';
 
 
-export class CvCameraPreviewBase extends Image {
+export class CvCameraPreviewBase extends View {
 }

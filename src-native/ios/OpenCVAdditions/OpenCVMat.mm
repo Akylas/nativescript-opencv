@@ -13,33 +13,33 @@
 
 @implementation OpenCVMat
 {
-  cv::Mat * _mat;
+  cv::Mat _mat;
   BOOL owned;
 }
--(id)init {
-  self = [super init];
-  _mat = new cv::Mat;
-  owned = true;
-  return self;
-}
+//-(id)init {
+//  self = [super init];
+//  _mat = new cv::Mat;
+//  owned = true;
+//  return self;
+//}
 
--(void)setMat:(cv::Mat*)newVal {
-  @synchronized(self) {
-    if (_mat && owned) {
-      _mat->release();
-      delete _mat;  // it's OK to delete a NULL pointer
-
-    }
-    _mat = newVal;
-  }
-}
+//-(void)setMat:(cv::Mat*)newVal {
+//  @synchronized(self) {
+//    if (_mat && owned) {
+////      _mat->release();
+//      delete _mat;  // it's OK to delete a NULL pointer
+//
+//    }
+//    _mat = newVal;
+//  }
+//}
 
 -(cv::Mat*)mat {
-  return _mat;
+  return &_mat;
 }
 
 -(void)dealloc {
-  [self setMat:NULL];
+//  [self setMat:NULL];
 //  delete _mat;
 }
 
@@ -49,32 +49,33 @@
   self = [super init];
   
   if (self) {
-    [self setMat:&mat];
-    owned = false;
+    _mat = mat;
   }
   
   return self;
 }
-- (id)initWithOwnedMat:(cv::Mat&)mat
-{
-  // NSLog(@"initWithMat");
-  self = [super init];
-  
-  if (self) {
-    [self setMat:&mat];
-    owned = true;
-  }
-  
-  return self;
-}
+//- (id)initWithOwnedMat:(cv::Mat&)mat
+//{
+//  // NSLog(@"initWithMat");
+//  self = [super init];
+//
+//  if (self) {
+//    [self setMat:&mat];
+//    owned = true;
+//  }
+//
+//  return self;
+//}
 - (id)initWithRows:(int)rows cols:(int) cols type:(int) type
 {
   // NSLog(@"initWithRows %d %d %d", rows, cols, type);
   self = [super init];
   
   if (self) {
-    _mat = new cv::Mat(rows, cols, type);
-    owned = true;
+    CFTimeInterval startTime = CACurrentMediaTime();
+    _mat =  cv::Mat(rows, cols, type);
+//    owned = true;
+    NSLog(@"initWithRows duration %f", CACurrentMediaTime() - startTime);
   }
   
   return self;
@@ -86,8 +87,9 @@
   self = [super init];
   
   if (self) {
-    [self setMat:mat.mat];
-    owned = false;
+//    [self setMat:mat.mat];
+    _mat = *mat.mat;
+//    owned = false;
   }
   
   return self;
@@ -99,11 +101,13 @@
   
   
   if (self) {
-    cv::Mat* mat = new cv::Mat();
+    CFTimeInterval startTime = CACurrentMediaTime();
+//    cv::Mat* mat = new cv::Mat();
     CGImageAlphaInfo ainfo = CGImageGetAlphaInfo( image.CGImage );
-    UIImageToMat( image, *mat, ainfo != kCGImageAlphaNone );
+    UIImageToMat( image, _mat, ainfo != kCGImageAlphaNone );
     // NSLog(@"initWithImage2 %d %d", mat->cols, mat->rows);
-    [self setMat:mat];
+//    [self setMat:mat];
+    NSLog(@"initWithImage duration %f", CACurrentMediaTime() - startTime);
     owned = true;
   }
   
@@ -111,52 +115,52 @@
 }
 
 -(void)releaseMat {
-  if (_mat) {
-    _mat->release();
-    delete _mat;  // it's OK to delete a NULL pointer
-    _mat = NULL;
+//  if (_mat) {
+    _mat.release();
+//    delete _mat;  // it's OK to delete a NULL pointer
+//    _mat = NULL;
 //    [self setMat:NULL];
 //    return _mat->release();
-  }
+//  }
 }
 
 -(int)channels {
-  if (_mat) {
-    return _mat->channels();
-  }
-  return -1;
+//  if (_mat) {
+    return _mat.channels();
+//  }
+//  return -1;
 }
 
 -(void)setTo:(UIColor*)color
 {
-  if (_mat) {
+//  if (_mat) {
     const CGFloat* components = CGColorGetComponents(color.CGColor);
     cv::Scalar cvColor(components[0]*255, components[1]*255, components[2]*255, components[3]*255);
-    _mat->setTo(cvColor);
-  }
+    _mat.setTo(cvColor);
+//  }
 }
 
 -(CGSize)size {
-  if (_mat) {
+//  if (_mat) {
     // NSLog(@"size %d %d", _mat->cols, _mat->rows);
-    return CGSizeMake(_mat->cols, _mat->rows);
-  }
-  return CGSizeZero;
+    return CGSizeMake(_mat.cols, _mat.rows);
+//  }
+//  return CGSizeZero;
 }
 
 -(UIImage*)toImage  {
-  if (_mat) {
+//  if (_mat) {
 //    if (_mat->channels() == 4) {
 //    return MatToUIImage(*_mat);
 //    }
-    return [OpenCVWrapper UIImageFromCVMat:*_mat];
-  }
-  return nil;
+    return [OpenCVWrapper UIImageFromCVMat:_mat];
+//  }
+//  return nil;
 }
 
 -(OpenCVMat*)clone {
-  OpenCVMat* newMat = [[OpenCVMat alloc] initWithRows:_mat->rows cols:_mat->cols type:_mat->type()];
-  _mat->copyTo(*newMat.mat);
+  OpenCVMat* newMat = [[OpenCVMat alloc] initWithRows:_mat.rows cols:_mat.cols type:_mat.type()];
+  _mat.copyTo(*newMat.mat);
   return newMat;
 }
 

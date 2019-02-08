@@ -6,7 +6,11 @@ import * as path from 'path';
 module.exports = function(logger, platformsData, projectData, hookArgs, $usbLiveSyncService) {
     const targetMapFolder = path.dirname(projectData.projectDir + targetMapLocation);
     if (!fs.existsSync(targetMapFolder)) {
-        fs.mkdirSync(targetMapFolder);
+        try {
+            fs.mkdirSync(targetMapFolder);
+        } catch (e) {}
     }
-    fs.copyFileSync(projectData.projectDir + sourceMapLocation, projectData.projectDir + targetMapLocation);
+    if (fs.existsSync(targetMapFolder)) {
+        fs.copyFileSync(projectData.projectDir + sourceMapLocation, projectData.projectDir + targetMapLocation);
+    }
 };
