@@ -3,7 +3,7 @@ set -o pipefail
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-SOURCE_NAME="TNSListView"
+SOURCE_NAME="OpenCVAdditions"
 ANDROID_SOURCE_DIR="$CURRENT_DIR/../src-native/android"
 
 PROJECT_NAME="$SOURCE_NAME"
