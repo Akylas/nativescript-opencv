@@ -209,7 +209,6 @@ export namespace Imgproc {
         return OpenCVWrapper.GaussianBlur(mat1, mat2, x, y, sigmaX);
     }
     export function findContours(mat1: OpenCVMat, hierarchy: OpenCVMat, mode: number, method: number, offset: CvPoint = { x: 0, y: 0 }) {
-        // const array = NSMutableArray.array() as NSMutableArray<NSArray<NSDictionary<string, number>>>;
         return OpenCVWrapper.findContours(mat1, hierarchy, mode, method, offset);
         // const count = result.count;
         // for (let i = 0; i < count; i++) {

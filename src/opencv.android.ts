@@ -47,7 +47,6 @@ export class Imgproc extends CVImgproc {
         method: any,
         offset: any = { x: 0, y: 0 }
     ) {
-        // const array = NSMutableArray.array() as NSMutableArray<NSArray<NSDictionary<string, number>>>;
         org.bytedeco.javacpp.opencv_imgproc.findContours(mat1, null, hierarchy, mode, method, new org.bytedeco.javacpp.opencv_core.Point(offset.x, offset.y));
         return {
             size() {
@@ -201,13 +200,9 @@ export class AsyncTaskRunner extends android.os.AsyncTask<String, String, String
 }
 
 export class OpenCvCameraPreview extends CvCameraPreviewBase {
-    nativeViewProtected: org.nativescript.demovueopencv.CvCameraPreview;
+    nativeViewProtected: org.nativescript.opencv.CvCameraPreview;
     public createNativeView() {
-        const result = new org.nativescript.demovueopencv.CvCameraPreview(
-            this._context,
-            org.nativescript.demovueopencv.CvCameraPreview.CAMERA_BACK,
-            org.nativescript.demovueopencv.CvCameraPreview.SCALE_FIT
-        );
+        const result = new org.nativescript.opencv.CvCameraPreview(this._context, org.nativescript.opencv.CvCameraPreview.CAMERA_BACK, org.nativescript.opencv.CvCameraPreview.SCALE_FIT);
         // console.log('createNativeView', result, result.delegate);
         return result;
     }
@@ -215,7 +210,7 @@ export class OpenCvCameraPreview extends CvCameraPreviewBase {
         super.initNativeView();
         // initCvCameraViewListener();
         const nativeView = this.nativeViewProtected;
-        const listener = new org.nativescript.demovueopencv.CvCameraPreview.CvCameraViewListener({
+        const listener = new org.nativescript.opencv.CvCameraPreview.CvCameraViewListener({
             onCameraFrame: (mat: org.bytedeco.javacpp.opencv_core.Mat): org.bytedeco.javacpp.opencv_core.Mat => {
                 this.notify({ eventName: 'processMat', object: this, mat });
 

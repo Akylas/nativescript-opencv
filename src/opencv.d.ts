@@ -1,5 +1,5 @@
 import { CvCameraPreviewBase } from './opencv.common';
-import { Color } from 'tns-core-modules/color/color';
+import { Color } from 'tns-core-modules/color';
 export declare namespace Core {
     const CV_8U: number;
     const CV_8S: number;
@@ -150,7 +150,17 @@ export declare namespace Imgproc {
     function GaussianBlur(mat1: Mat, mat2: Mat, x: number, y: number, sigmaX: number): void;
     function findContours(mat1: Mat, hierarchy: Mat, mode: number, method: number, offset?: CvPoint): ContoursVector;
     function contourArea(contours: any[], oriented?: boolean): number;
-    function drawContours(mat: Mat, contours: ContoursVector | CvPoint[][], contourIdx: number, color: string | Color, thickness?: number, lineType?: number, hierarchy?: Mat, maxLevel?: number, offset?: CvPoint): void;
+    function drawContours(
+        mat: Mat,
+        contours: ContoursVector | CvPoint[][],
+        contourIdx: number,
+        color: string | Color,
+        thickness?: number,
+        lineType?: number,
+        hierarchy?: Mat,
+        maxLevel?: number,
+        offset?: CvPoint
+    ): void;
     function resize(mat1: Mat, mat2: Mat, x: number, y: number): void;
 }
 declare class Mat extends NSObject {
@@ -165,6 +175,7 @@ declare class Mat extends NSObject {
     initWithImage(image: any): this;
     initWithRowsColsType(rows: number, cols: number, type: number): this;
     clone(): Mat;
+    setTo(color: Color): this;
 }
 
 export declare function imageFromMat(mat: Mat): any;

@@ -2,9 +2,9 @@
 
 declare namespace org {
     export namespace nativescript {
-        export namespace demovueopencv {
+        export namespace opencv {
             export class CvCameraPreview {
-                public static class: java.lang.Class<org.nativescript.demovueopencv.CvCameraPreview>;
+                public static class: java.lang.Class<org.nativescript.opencv.CvCameraPreview>;
                 public static CAMERA_BACK: number;
                 public static CAMERA_FRONT: number;
                 public static SCALE_FIT: number;
@@ -20,7 +20,7 @@ declare namespace org {
                 public constructor(param0: globalAndroid.content.Context, param1: globalAndroid.util.AttributeSet);
                 public onPreviewFrame(param0: native.Array<number>, param1: globalAndroid.hardware.Camera): void;
                 public onMeasure(param0: number, param1: number): void;
-                public setCvCameraViewListener(param0: org.nativescript.demovueopencv.CvCameraPreview.CvCameraViewListener): void;
+                public setCvCameraViewListener(param0: org.nativescript.opencv.CvCameraPreview.CvCameraViewListener): void;
                 public deliverAndDrawFrame(param0: org.bytedeco.javacv.Frame): void;
                 public surfaceDestroyed(param0: globalAndroid.view.SurfaceHolder): void;
                 public constructor(param0: globalAndroid.content.Context, param1: number, param2: number);
@@ -29,11 +29,11 @@ declare namespace org {
             }
             export namespace CvCameraPreview {
                 export class CameraWorker {
-                    public static class: java.lang.Class<org.nativescript.demovueopencv.CvCameraPreview.CameraWorker>;
+                    public static class: java.lang.Class<org.nativescript.opencv.CvCameraPreview.CameraWorker>;
                     public run(): void;
                 }
                 export class CvCameraViewListener {
-                    public static class: java.lang.Class<org.nativescript.demovueopencv.CvCameraPreview.CvCameraViewListener>;
+                    public static class: java.lang.Class<org.nativescript.opencv.CvCameraPreview.CvCameraViewListener>;
                     /**
                      * Constructs a new instance of the org.nativescript.demovueopencv.CvCameraPreview$CvCameraViewListener interface with the provided implementation. An empty constructor exists calling super() when extending the interface class.
                      */
