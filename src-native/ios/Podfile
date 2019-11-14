@@ -1,8 +1,5 @@
 target 'OpenCVAdditions' do
-
-    source 'https://github.com/CocoaPods/Specs.git'
     platform :ios, '8.0'
-    pod 'OpenCV'
-    
+    pod 'OpenCV2'
 end
 
