@@ -7,4 +7,4 @@ SOURCE_NAME="OpenCVAdditions"
 IOS_SOURCE_DIR="$CURRENT_DIR"
 
 cd $IOS_SOURCE_DIR
-xcodebuild -workspace OpenCVAdditions.xcworkspace -scheme universal
+xcodebuild -workspace OpenCVAdditions.xcworkspace -scheme universal -sdk iphonesimulator

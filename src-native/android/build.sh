@@ -3,14 +3,14 @@ set -o pipefail
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-SOURCE_NAME="OpenCVAdditions"
-ANDROID_SOURCE_DIR="$CURRENT_DIR/../src-native/android"
+SOURCE_NAME="opencv-additions"
+ANDROID_SOURCE_DIR="$CURRENT_DIR/../android"
 
 PROJECT_NAME="$SOURCE_NAME"
 
-BUILD_OUTPUT_DIR="$ANDROID_SOURCE_DIR/$PROJECT_NAME/build/outputs/aar/"
+BUILD_OUTPUT_DIR="$ANDROID_SOURCE_DIR/$PROJECT_NAME/build/outputs/aar"
 
-PLUGIN_TARGET_DIR="$CURRENT_DIR/../src/platforms"
+PLUGIN_TARGET_DIR="$CURRENT_DIR/../../src/platforms"
 PLUGIN_TARGET_SUBDIR="$PLUGIN_TARGET_DIR/android"
 
 cd $ANDROID_SOURCE_DIR
