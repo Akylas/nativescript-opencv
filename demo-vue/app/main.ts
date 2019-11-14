@@ -1,7 +1,7 @@
-import Vue, { registerElement } from 'nativescript-vue';
+import Vue from 'nativescript-vue';
 import * as opencv from 'nativescript-opencv';
 
-registerElement('OpenCvCameraPreview', () => require('nativescript-opencv').OpenCvCameraPreview);
+Vue.registerElement('OpenCvCameraPreview', () => require('nativescript-opencv').OpenCvCameraPreview);
 
 import { getExamples } from './examples';
 import * as views from './views';
