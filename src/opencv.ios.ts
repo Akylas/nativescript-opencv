@@ -246,7 +246,6 @@ export namespace Imgproc {
 
 export { CV_CHAIN_APPROX_SIMPLE };
 
-
 // class CVMat extends OpenCVMat {
 //     release() {
 //         this.releaseMat();
@@ -264,7 +263,6 @@ export { CV_CHAIN_APPROX_SIMPLE };
 //     }
 // }
 
-
 // OpenCVMat.prototype.release = function() {
 //     this.releaseMat();
 // };
@@ -273,7 +271,6 @@ export function imageFromMat(mat: OpenCVMat) {
     return mat.toImage();
 }
 const CVMat = OpenCVMat;
-
 
 export class Mat {
     _native: OpenCVMat;
@@ -303,18 +300,17 @@ export class Mat {
                         }
                     }
                 }
+                const methodName = name;
                 if (methodName === 'setTo') {
                     if (!(args[0] instanceof Color)) {
                         args[0] = new Color(args[0]);
                     }
                     args[0] = args[0].ios;
                 }
-                var methodName = name;
                 try {
                     return native[methodName](...args);
-
-                } catch(err) {
-                    console.error('error calling Mat', methodName, err)
+                } catch (err) {
+                    console.error('error calling Mat', methodName, err);
                     return null;
                 }
             };
@@ -405,6 +401,4 @@ export class Mat {
 //         // console.log('processOpenCVMat', mat.channels());
 //     }
 // }
-export function init() {
-    
-}
+export function init() {}

@@ -1,7 +1,7 @@
 // import { CvCameraPreviewBase } from './opencv.common';
 import { Color } from '@nativescript/core/color';
 
-let OpenCVMat: typeof org.opencv.core.Mat
+let OpenCVMat: typeof org.opencv.core.Mat;
 let CVScalar: typeof org.opencv.core.Scalar;
 let CVImgproc: typeof org.opencv.imgproc.Imgproc;
 let CVSize: typeof org.opencv.core.Size;
@@ -10,10 +10,9 @@ let CVImgcodecs: typeof org.opencv.imgcodecs.Imgcodecs;
 let CvType: typeof org.opencv.core.CvType;
 let CVPoint: typeof org.opencv.core.Point;
 
-
 type Constructor<T> = new (...args: any[]) => T;
 type OpenCVClass<T> = T & {
-    _native:T
+    _native: T;
 };
 
 function createOpenCVClass<T>(clas: Constructor<T>) {
@@ -44,7 +43,7 @@ function createOpenCVClass<T>(clas: Constructor<T>) {
                             }
                         }
                     }
-                    var methodName = name;
+                    const methodName = name;
                     try {
                         return native[methodName](...args);
                     } catch (err) {
@@ -58,7 +57,6 @@ function createOpenCVClass<T>(clas: Constructor<T>) {
         }
     };
 }
-
 
 export function init() {
     if (OpenCVMat) {
@@ -182,7 +180,7 @@ export function arrayNativeBuffer(array, useInts = false) {
     }
     const length = array.length;
     const buffer = createArrayBuffer(length, useInts);
-    var arrayBuffer = useInts ? new Int8Array(buffer) : new Float32Array(buffer);
+    const arrayBuffer = useInts ? new Int8Array(buffer) : new Float32Array(buffer);
     arrayBuffer.set(array);
 
     return buffer.bb;
@@ -253,13 +251,13 @@ export class Mat {
                         }
                     }
                 }
+                const methodName = name;
                 if (methodName === 'setTo') {
                     if (!(args[0] instanceof Color)) {
                         args[0] = new Color(args[0]);
                     }
                     args[0] = new CVScalar(args[0].r, args[0].g, args[0].b, args[0].a / 255);
                 }
-                var methodName = name;
                 try {
                     return native[methodName](...args);
                 } catch (err) {
