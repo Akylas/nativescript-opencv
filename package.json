@@ -16,7 +16,9 @@
         "plugin.watch.tsc": "npm run tsc -- -w",
         "plugin.watch.android": "npm i && npm-watch build.android",
         "plugin.watch.ios": "npm i && npm-watch build.ios",
-        "plugin.watch": "npm run plugin.watch.tsc & npm run plugin.watch.android & npm run plugin.watch.ios"
+        "plugin.watch": "npm run plugin.watch.tsc & npm run plugin.watch.android & npm run plugin.watch.ios",
+        "publish": "npm run build && lerna publish",
+        "commitmsg": "commitlint -e $GIT_PARAMS"
     },
     "devDependencies": {
         "@angular/core": "^10.0.5",
@@ -45,7 +47,6 @@
     },
     "homepage": "https://github.com/Akylas/nativescript-opencv#readme",
     "watch": {
-        
         "build.ios": {
             "patterns": [
                 "../src-native/ios/OpenCVAdditions"
