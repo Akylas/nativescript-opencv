@@ -4,6 +4,11 @@
 //dependencies {
 //	compile 'com.android.support:recyclerview-v7:+'
 //}
+allprojects {
+  repositories {
+    jcenter()
+  }
+}
 
 sourceSets {
     main {
@@ -13,8 +18,6 @@ sourceSets {
 
 android {
   defaultConfig {
-    generatedDensities = []
-    applicationId = "org.nativescript.demovueopencv"
     multiDexEnabled true
     //override supported platforms
     // ndk {
@@ -22,21 +25,25 @@ android {
     //   		abiFilters "armeabi-v7a"
  		// }
 
-     ndk {
-      abiFilters.clear()
-            // abiFilters 'x86', 'armeabi', 'armeabi-v7a'   
-             }
+    //  ndk {
+    //   abiFilters.clear()
+    //         // abiFilters 'x86', 'armeabi', 'armeabi-v7a'   
+    //          }
 
   }
   // splits {
   //       abi {
   //           enable true
   //           reset()
-  //           include 'x86', 'armeabi', 'armeabi-v7a'
+  //           include 'x86', 'armeabi-v7a'
+  //           // include 'armeabi-v7a' //only x86 for now to test on emulator
   //           universalApk false
   //       }
   //   }
   aaptOptions {
     additionalParameters "--no-version-vectors"
   }
+}
+dependencies {
+  api 'com.otaliastudios:cameraview:2.6.3'
 }
