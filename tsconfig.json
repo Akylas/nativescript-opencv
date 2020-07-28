@@ -2,12 +2,15 @@
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
-        "moduleResolution": "node",
+        "declaration": true,
         "removeComments": true,
         "noLib": false,
-        "emitDecoratorMetadata": false,
+        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "lib": ["es6", "dom"],
+        "lib": [
+            "es6",
+            "dom"
+        ],
         "sourceMap": true,
         "pretty": true,
         "allowUnreachableCode": false,
@@ -16,23 +19,30 @@
         "noEmitOnError": false,
         "noImplicitAny": false,
         "noImplicitReturns": true,
-        "noImplicitUseStrict": true,
+        "noImplicitUseStrict": false,
         "noFallthroughCasesInSwitch": true,
-        "sourceRoot": "../src",
         "baseUrl": ".",
         "outDir": "./plugin",
+        "rootDir": "src",
         "paths": {
+            "*": [
+                "./node_modules/*"
+            ],
             "tns-core-modules": ["./node_modules/@nativescript/core"],
             "tns-core-modules/*": ["./node_modules/@nativescript/core/*"],
-            "nativescript-label": ["src/label"],
-            "nativescript-label/*": ["src/*"],
-            "*": ["node_modules/*"]
+            "nativescript-opencv": ["src/opencv"],
+            "nativescript-opencv/*": ["src/*"],
         }
     },
-    "include": ["src/**/*", "./references.d.ts"],
-    "exclude": ["node_modules", "platforms"],
-    "compileOnSave": false,
-    "angularCompilerOptions": {
-        "skipTemplateCodegen": true
-    }
+    "include": [
+        "src/**/*.ts",
+        "references.d.ts",
+        "src/references.d.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        ".git",
+        "dist"
+    ],
+    "compileOnSave": false
 }

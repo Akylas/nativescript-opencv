@@ -1,5 +1,4 @@
 /// <reference path="./typings/opencv.android.d.ts" />
-import { CvCameraPreviewBase } from './opencv.common';
 import { Color } from '@nativescript/core/color';
 
 declare namespace org {

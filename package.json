@@ -20,14 +20,18 @@
     },
     "devDependencies": {
         "@angular/core": "^10.0.5",
-        "@types/node": "^14.0.24",
+        "@commitlint/cli": "^9.1.1",
+        "@types/node": "^14.0.26",
+        "@typescript-eslint/eslint-plugin": "3.7.1",
+        "@typescript-eslint/parser": "3.7.1",
+        "cpy-cli": "^3.1.1",
+        "eslint": "6.8.0",
+        "husky": "^4.2.5",
+        "lerna": "^3.22.1",
         "npm-watch": "^0.6.0",
         "rimraf": "^3.0.2",
         "@nativescript/core": "6.5.12",
         "tns-platform-declarations": "^6.5.12",
-        "tslint": "^6.1.2",
-        "tslint-config-prettier": "^1.18.0",
-        "tslint-config-standard": "^9.0.0",
         "typescript": "~3.9.7"
     },
     "repository": {
@@ -41,17 +45,17 @@
     },
     "homepage": "https://github.com/Akylas/nativescript-opencv#readme",
     "watch": {
-        "build.android": {
-            "patterns": [
-                "../src-native/android/OpenCVAdditions/src"
-            ],
-            "extensions": "java"
-        },
+        
         "build.ios": {
             "patterns": [
                 "../src-native/ios/OpenCVAdditions"
             ],
             "extensions": "h,m,mm"
         }
+    },
+    "commitlint": {
+        "extends": [
+            "@commitlint/config-conventional"
+        ]
     }
 }
