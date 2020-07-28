@@ -55,9 +55,9 @@
 @implementation OpenCVWrapper
 
 +(void)cvtColor: (OpenCVMat*)mat1 :(OpenCVMat*)mat2 :(int)colorType :(int)dstChannels {
-  CFTimeInterval startTime = CACurrentMediaTime();
+  // CFTimeInterval startTime = CACurrentMediaTime();
   cv::cvtColor(*mat1.mat, *mat2.mat, colorType, dstChannels);
-  NSLog(@"cvtColor duration %f", CACurrentMediaTime() - startTime);
+  // NSLog(@"cvtColor duration %f", CACurrentMediaTime() - startTime);
 }
 //+(void)cvtColor: (OpenCVMat*)mat1 :(OpenCVMat*)mat2 :(int)colorType {
 //  cv::cvtColor(*mat1.mat, *mat2.mat, colorType, 0);
@@ -76,9 +76,9 @@
 }
 
 +(void)Canny: (OpenCVMat*)mat1 :(OpenCVMat*)mat2 :(double)threshold1 :(double)threshold2 :(int)apertureSize :(BOOL)L2gradient {
-  CFTimeInterval startTime = CACurrentMediaTime();
+  // CFTimeInterval startTime = CACurrentMediaTime();
  cv::Canny(*mat1.mat, *mat2.mat, threshold1, threshold2, apertureSize, L2gradient);
-  NSLog(@"Canny duration %f", CACurrentMediaTime() - startTime);
+  // NSLog(@"Canny duration %f", CACurrentMediaTime() - startTime);
 }
 +(double)contourArea:(NSArray*)contour :(BOOL)oriented {
   __block std::vector<cv::Point> vector;
@@ -89,11 +89,11 @@
 }
 
 +(ContoursVector*)findContours: (OpenCVMat*)mat1 :(OpenCVMat*)hierarchy :(int)mode :(int)method :(CGPoint)offset {
-  CFTimeInterval startTime = CACurrentMediaTime();
+  // CFTimeInterval startTime = CACurrentMediaTime();
   ContoursVector* result = [[ContoursVector alloc] init];
   std::vector<std::vector<cv::Point>>* vector = result.vector;
   cv::findContours(*mat1.mat, *vector, *hierarchy.mat, mode, method, cv::Point(offset.x, offset.y));
-  NSLog(@"findContours duration %f", CACurrentMediaTime() - startTime);
+  // NSLog(@"findContours duration %f", CACurrentMediaTime() - startTime);
   return result;
 //  NSLog(@"findContours1 duration %f", CACurrentMediaTime() - startTime);
 //  for(auto const& value: vectors) {
@@ -221,6 +221,6 @@
   std::vector<std::vector<cv::Point>>* vector = contours.vector;
   int count = (int)vector->size();
   cv::drawContours(*mat.mat, *vector, contourIdx, cvColor, thickness, lineType, hierarchy? *hierarchy.mat : cv::noArray(), maxLevel, cvOffset);
-  NSLog(@"drawContours duration %f", CACurrentMediaTime() - startTime);
+  // NSLog(@"drawContours duration %f", CACurrentMediaTime() - startTime);
 }
 @end

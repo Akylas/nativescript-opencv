@@ -38,6 +38,6 @@
     "homepage": "https://github.com/Akylas/nativescript-opencv",
     "readmeFilename": "README.md",
     "dependencies": {
-        "nativescript-hook": "0.2.4"
+        "nativescript-hook": "0.2.5"
     }
 }

@@ -1,12 +1,54 @@
+apply plugin: 'com.ahasbini.android-opencv-gradle-plugin'
+
 android {
+    defaultConfig {
+        externalNativeBuild {
+            cmake {
+                cppFlags "-std=c++14"
+                abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            //noinspection GroovyAssignabilityCheck
+            path "CMakeLists.txt"
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
+androidOpenCV {
+    version '4.4.0'
+}
 
- dependencies {
-    implementation group: 'org.bytedeco', name: 'javacv', version: '1.4.4'
-    // implementation group: 'org.bytedeco.javacpp-presets', name: 'opencv-platform', version: '3.4.3-1.4.4'
-    implementation group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.3-1.4.4', classifier: 'android-arm'
-    implementation group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.3-1.4.4', classifier: 'android-x86'
-    implementation group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '3.4.3-1.4.4', classifier: 'android-arm'
-    implementation group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '3.4.3-1.4.4', classifier: 'android-x86'
-  }
+// dependencies {
+//   def javaCVVersion =  project.hasProperty("javaCVVersion") ? project.javaCVVersion : "1.5.2"
+//   def openCVVersion =  project.hasProperty("openCVVersion") ? project.openCVVersion : "4.1.2"
+//   def ffmpegVersion =  project.hasProperty("ffmpegVersion") ? project.ffmpegVersion : "4.2.1"
+//   def openblasVersion =  project.hasProperty("openblasVersion") ? project.openblasVersion : "0.3.7"
+//   implementation (group: 'org.bytedeco', name: 'javacv', version: "$javaCVVersion" , {
+//     exclude group: 'org.bytedeco', module: 'flandmark'
+//     exclude group: 'org.bytedeco', module: 'flycapture'
+//     exclude group: 'org.bytedeco', module: 'leptonica'
+//     exclude group: 'org.bytedeco', module: 'libdc1394'
+//     exclude group: 'org.bytedeco', module: 'libfreenect2'
+//     exclude group: 'org.bytedeco', module: 'libfreenect'
+//     exclude group: 'org.bytedeco', module: 'librealsense'
+//     exclude group: 'org.bytedeco', module: 'tesseract'
+//     exclude group: 'org.bytedeco', module: 'videoinput'
+//     exclude group: 'org.bytedeco', module: 'artoolkitplus'
+//   })
+//   implementation group: 'org.bytedeco', name: 'ffmpeg', version: "$ffmpegVersion-$javaCVVersion", classifier: 'android-arm'
+//   implementation group: 'org.bytedeco', name: 'ffmpeg', version: "$ffmpegVersion-$javaCVVersion", classifier: 'android-x86'
+//   implementation group: 'org.bytedeco', name: 'opencv', version: "$openCVVersion-$javaCVVersion", classifier: 'android-arm'
+//   implementation group: 'org.bytedeco', name: 'opencv', version: "$openCVVersion-$javaCVVersion", classifier: 'android-x86'
+//   implementation group: 'org.bytedeco', name: 'openblas', version: "$openblasVersion-$javaCVVersion", classifier: 'android-arm'
+//   implementation group: 'org.bytedeco', name: 'openblas', version: "$openblasVersion-$javaCVVersion", classifier: 'android-x86'
+// }
+

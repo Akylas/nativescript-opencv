@@ -1,6 +1,5 @@
-import { booleanConverter, Color, Property, View } from 'tns-core-modules/ui/core/view';
-import { Image } from 'tns-core-modules/ui/image';
+// import { View } from '@nativescript/core/ui/core/view';
 
 
-export class CvCameraPreviewBase extends View {
-}
+// export class CvCameraPreviewBase extends View {
+// }

@@ -2,12 +2,13 @@
     "name": "nativescript-opencv",
     "version": "1.0.0",
     "scripts": {
-        "tsc": "tsc -skipLibCheck && cp src/opencv.d.ts plugin",
-        "build.wrappers": "npm i && npm run tsc",
+        "tsc": "cp -fr src/opencv.d.ts src/typings plugin && tsc -skipLibCheck",
+        "build.plugin": " cp README.md plugin/ && rm -f .tsbuildinfo && npm run tsc",
         "build.android": "bash src-native/android/build.sh",
         "build.ios": "bash src-native/ios/build.sh",
-        "build.native": "npm run build.android && npm run build.ios",
-        "build": "npm run build.wrappers && npm run build.native",
+        "build.native": "npm run build.ios",
+        "build.esm": "tsc -skipLibCheck --target es2015 --module esnext --removeComments --outDir build/esm && node ./build.esm.js",
+        "build": "npm run build.native && npm run build.plugin",
         "demo.ios": "npm i && npm run tsc && cd demo && tns run ios",
         "demo.android": "npm i && npm run tsc && cd demo && tns run android",
         "clean.demo": "rimraf demo/hooks demo/node_modules demo/platforms",
@@ -18,16 +19,16 @@
         "plugin.watch": "npm run plugin.watch.tsc & npm run plugin.watch.android & npm run plugin.watch.ios"
     },
     "devDependencies": {
-        "@angular/core": "^8.2.14",
-        "@types/node": "^12.12.7",
+        "@angular/core": "^10.0.5",
+        "@types/node": "^14.0.24",
         "npm-watch": "^0.6.0",
-        "rimraf": "^3.0.0",
-        "tns-core-modules": "6.2.1",
-        "tns-platform-declarations": "^6.2.1",
-        "tslint": "^5.20.1",
+        "rimraf": "^3.0.2",
+        "@nativescript/core": "6.5.12",
+        "tns-platform-declarations": "^6.5.12",
+        "tslint": "^6.1.2",
         "tslint-config-prettier": "^1.18.0",
         "tslint-config-standard": "^9.0.0",
-        "typescript": "~3.7.2"
+        "typescript": "~3.9.7"
     },
     "repository": {
         "type": "git",

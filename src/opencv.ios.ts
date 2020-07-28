@@ -1,7 +1,6 @@
-import { CvCameraPreviewBase } from './opencv.common';
-import { ImageSource } from 'tns-core-modules/image-source/image-source';
-import { ios } from 'tns-core-modules/utils/utils';
-import { Color } from 'tns-core-modules/color/color';
+// import { CvCameraPreviewBase } from './opencv.common';
+import { ImageSource } from '@nativescript/core/image-source';
+import { Color } from '@nativescript/core/color';
 
 declare const OPENCV_8U: number;
 declare const OPENCV_8S: number;
@@ -274,85 +273,138 @@ export function imageFromMat(mat: OpenCVMat) {
     return mat.toImage();
 }
 const CVMat = OpenCVMat;
-// type CVMat = new () => OpenCVMat;
-export { CVMat as Mat };
 
-export function createMat(rows, cols, type) {
-    const result = OpenCVMat.alloc().initWithRowsColsType(rows, cols, type);
-    // console.log('createMat', rows, cols, type, result.size().width, result.size().height);
-    return result;
-}
 
-export function imread(value: any): OpenCVMat {
-    // console.log('imread', value);
-    if (value instanceof ImageSource) {
-        // console.log('imread', 'ImageSource');
-        value = value.ios;
+export class Mat {
+    _native: OpenCVMat;
+    constructor(...args) {
+        for (let index = 0; index < args.length; index++) {
+            const element = args[index];
+            // if (Array.isArray(element)) {
+            //         args[index] = arrayNativeBuffer(element);
+            // }
+        }
+        // @ts-ignore
+        this._native = OpenCVMat.alloc().initWithRowsColsType(args[0], args[1], args[2]);
+        return new Proxy(this, this);
     }
-    if (value instanceof UIImage) {
-        // const cvMat = OpenCVWrapper.cvMatFromUIImage(value);
-        // console.log('imread', 'UIImage', value.size);
-        return OpenCVMat.alloc().initWithImage(value);
-    }
-    return null;
-}
+    // static ones(...args) {
+    //     return org.opencv.core.Mat.ones.apply(org.opencv.core.Mat, args);
+    // }
+    get(target, name, receiver) {
+        const native = this._native;
+        if (native[name]) {
+            return function (...args) {
+                for (let index = 0; index < args.length; index++) {
+                    const element = args[index];
+                    if (element) {
+                        if (element._native) {
+                            args[index] = element._native;
+                        }
+                    }
+                }
+                if (methodName === 'setTo') {
+                    if (!(args[0] instanceof Color)) {
+                        args[0] = new Color(args[0]);
+                    }
+                    args[0] = args[0].ios;
+                }
+                var methodName = name;
+                try {
+                    return native[methodName](...args);
 
-class CvCameraPreviewDelegateImpl extends NSObject implements CvCameraPreviewDelegate {
-    public static ObjCProtocols = [CvCameraPreviewDelegate];
-
-    private _owner: WeakRef<OpenCvCameraPreview>;
-
-    public static initWithOwner(owner: WeakRef<OpenCvCameraPreview>): CvCameraPreviewDelegateImpl {
-        const impl = CvCameraPreviewDelegateImpl.new() as CvCameraPreviewDelegateImpl;
-        impl._owner = owner;
-        return impl;
-    }
-    processOpenCVMat(mat: OpenCVMat) {
-        const owner = this._owner && this._owner.get();
-        if (owner) {
-            owner.processOpenCVMat(mat);
+                } catch(err) {
+                    console.error('error calling Mat', methodName, err)
+                    return null;
+                }
+            };
+        } else {
+            return Reflect.get(target, name, receiver);
         }
     }
 }
-export class OpenCvCameraPreview extends CvCameraPreviewBase {
-    nativeViewProtected: CvCameraPreview;
-    _delegate: CvCameraPreviewDelegateImpl;
-    public createNativeView() {
-        const result = CvCameraPreview.alloc().initWithFrame(CGRectZero) as CvCameraPreview;
-        // console.log('createNativeView', result, result.delegate);
-        return result;
-    }
-    initNativeView() {
-        super.initNativeView();
-        this._delegate = CvCameraPreviewDelegateImpl.initWithOwner(new WeakRef(this));
-    }
+// type CVMat = new () => OpenCVMat;
+// export { CVMat as Mat };
 
-    disposeNativeView() {
-        this._delegate = null;
-        super.disposeNativeView();
-    }
+// export function createMat(rows, cols, type) {
+//     const result = OpenCVMat.alloc().initWithRowsColsType(rows, cols, type);
+//     // console.log('createMat', rows, cols, type, result.size().width, result.size().height);
+//     return result;
+// }
 
-    public onLoaded() {
-        super.onLoaded();
-        this.nativeViewProtected.delegate = this._delegate;
-    }
+// export function imread(value: any): OpenCVMat {
+//     // console.log('imread', value);
+//     if (value instanceof ImageSource) {
+//         // console.log('imread', 'ImageSource');
+//         value = value.ios;
+//     }
+//     if (value instanceof UIImage) {
+//         // const cvMat = OpenCVWrapper.cvMatFromUIImage(value);
+//         // console.log('imread', 'UIImage', value.size);
+//         return OpenCVMat.alloc().initWithImage(value);
+//     }
+//     return null;
+// }
 
-    public onUnloaded() {
-        this.nativeViewProtected.delegate = null;
-        super.onUnloaded();
-    }
-    cameraStarted() {
-        return this.nativeViewProtected.cameraStarted();
-    }
-    startCamera() {
-        this.nativeViewProtected.startCamera();
-    }
-    stopCamera() {
-        this.nativeViewProtected.stopCamera();
-    }
-    processOpenCVMat(mat: OpenCVMat) {
-        // const mat2 = new OpenCVMat();
-        this.notify({ eventName: 'processMat', object: this, mat });
-        // console.log('processOpenCVMat', mat.channels());
-    }
+// class CvCameraPreviewDelegateImpl extends NSObject implements CvCameraPreviewDelegate {
+//     public static ObjCProtocols = [CvCameraPreviewDelegate];
+
+//     private _owner: WeakRef<OpenCvCameraPreview>;
+
+//     public static initWithOwner(owner: WeakRef<OpenCvCameraPreview>): CvCameraPreviewDelegateImpl {
+//         const impl = CvCameraPreviewDelegateImpl.new() as CvCameraPreviewDelegateImpl;
+//         impl._owner = owner;
+//         return impl;
+//     }
+//     processOpenCVMat(mat: OpenCVMat) {
+//         const owner = this._owner && this._owner.get();
+//         if (owner) {
+//             owner.processOpenCVMat(mat);
+//         }
+//     }
+// }
+// export class OpenCvCameraPreview extends CvCameraPreviewBase {
+//     nativeViewProtected: CvCameraPreview;
+//     _delegate: CvCameraPreviewDelegateImpl;
+//     public createNativeView() {
+//         const result = CvCameraPreview.alloc().initWithFrame(CGRectZero) as CvCameraPreview;
+//         // console.log('createNativeView', result, result.delegate);
+//         return result;
+//     }
+//     initNativeView() {
+//         super.initNativeView();
+//         this._delegate = CvCameraPreviewDelegateImpl.initWithOwner(new WeakRef(this));
+//     }
+
+//     disposeNativeView() {
+//         this._delegate = null;
+//         super.disposeNativeView();
+//     }
+
+//     public onLoaded() {
+//         super.onLoaded();
+//         this.nativeViewProtected.delegate = this._delegate;
+//     }
+
+//     public onUnloaded() {
+//         this.nativeViewProtected.delegate = null;
+//         super.onUnloaded();
+//     }
+//     cameraStarted() {
+//         return this.nativeViewProtected.cameraStarted();
+//     }
+//     startCamera() {
+//         this.nativeViewProtected.startCamera();
+//     }
+//     stopCamera() {
+//         this.nativeViewProtected.stopCamera();
+//     }
+//     processOpenCVMat(mat: OpenCVMat) {
+//         // const mat2 = new OpenCVMat();
+//         this.notify({ eventName: 'processMat', object: this, mat });
+//         // console.log('processOpenCVMat', mat.channels());
+//     }
+// }
+export function init() {
+    
 }

@@ -1,19 +1,40 @@
-[![npm](https://img.shields.io/npm/v/nativescript-opencv.svg)](https://www.npmjs.com/package/nativescript-opencv)
-[![npm](https://img.shields.io/npm/dt/nativescript-opencv.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-opencv)
-[![GitHub forks](https://img.shields.io/github/forks/Akylas/nativescript-opencv.svg)](https://github.com/Akylas/nativescript-opencv/network)
-[![GitHub stars](https://img.shields.io/github/stars/Akylas/nativescript-opencv.svg)](https://github.com/Akylas/nativescript-opencv/stargazers)
+# Your Plugin Name
 
-[![NPM](https://nodei.co/npm/nativescript-opencv.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/nativescript-opencv/)
+Add your plugin badges here. See [nativescript-urlhandler](https://github.com/hypery2k/nativescript-urlhandler) for example.
+
+Then describe what's the purpose of your plugin. 
+
+In case you develop UI plugin, this is where you can add some screenshots.
+
+## (Optional) Prerequisites / Requirements
+
+Describe the prerequisites that the user need to have installed before using your plugin. See [nativescript-firebase plugin](https://github.com/eddyverbruggen/nativescript-plugin-firebase) for example.
+
 ## Installation
 
-* `tns plugin add nativescript-opencv`
+Describe your plugin installation steps. Ideally it would be something like:
 
-Be sure to run a new build after adding plugins to avoid any issues.
+```javascript
+tns plugin add <your-plugin-name>
+```
 
----
+## Usage 
 
+Describe any usage specifics for your plugin. Give examples for Android, iOS, Angular if needed. See [nativescript-drop-down](https://www.npmjs.com/package/nativescript-drop-down) for example.
+	
+	```javascript
+    Usage code snippets here
+    ```)
 
-### Usage
+## API
 
-The nativescript Opencv is based on [OpenCV](https://opencv.org/).
-The  API is still pretty basic. Look at ```opncv.d.ts``` to see what it currently can do
+Describe your plugin methods and properties here. See [nativescript-feedback](https://github.com/EddyVerbruggen/nativescript-feedback) for example.
+    
+| Property | Default | Description |
+| --- | --- | --- |
+| some property | property default value | property description, default values, etc.. |
+| another property | property default value | property description, default values, etc.. |
+    
+## License
+
+Apache License Version 2.0, January 2004

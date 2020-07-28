@@ -22,7 +22,7 @@ declare var CvCameraPreviewDelegate: {
 
 declare class ContoursVector {
     size(): number;
-	get(i: number, j: number): CvPoint;
+	get(i: number): org.opencv.core.MatOfPoint;
 	contourArea(index: number, oriented: boolean): number;
 }
 

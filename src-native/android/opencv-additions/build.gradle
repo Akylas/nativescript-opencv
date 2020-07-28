@@ -37,6 +37,22 @@ def computeTargetSdkVersion() {
     }
 }
 
+buildscript {
+    repositories {
+        maven {  // At the beginning of the block
+          url "https://plugins.gradle.org/m2/"
+        }
+        // ... google() or jcenter() or others
+        maven { // At the end of the block and after google()
+           url 'https://repo.gradle.org/gradle/libs-releases'
+        }
+    }
+    dependencies {
+        // ... the Android plugin and other classpath definitions
+        classpath 'com.ahasbini.tools:android-opencv-gradle-plugin:0.1.+'
+    }
+}
+apply plugin: 'com.ahasbini.android-opencv-gradle-plugin' // After the Android plugin
 android {
     compileSdkVersion computeCompileSdkVersion()
     buildToolsVersion computeBuildToolsVersion()
@@ -53,23 +69,37 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
+androidOpenCV { // After the android block
 
-    // MY PREBUILD TASK
-    task PreBuild {
-        println "MY PRE-BUILD TASK"
-    }
-
-    // MY POSTBUILD TASK
-    gradle.buildFinished {
-        println "MY POST_BUILD TASK"
-    }
+    // Required: Version of OpenCV to be used in the project
+    version '4.4.0'
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation group: 'org.bytedeco', name: 'javacv', version: '1.4.3'
-    implementation group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.3-1.4.3'
+//   def javaCVVersion =  project.hasProperty("javaCVVersion") ? project.javaCVVersion : "1.5.2"
+//   def openCVVersion =  project.hasProperty("openCVVersion") ? project.openCVVersion : "4.1.2"
+//   def ffmpegVersion =  project.hasProperty("ffmpegVersion") ? project.ffmpegVersion : "4.2.1"
+//     implementation fileTree(include: ['*.jar'], dir: 'libs')
+//     implementation 'com.android.support:multidex:1.0.3'
+//    implementation (group: 'org.bytedeco', name: 'javacv', version: "$javaCVVersion" , {
+//     exclude group: 'org.bytedeco', module: 'flandmark'
+//     exclude group: 'org.bytedeco', module: 'flycapture'
+//     exclude group: 'org.bytedeco', module: 'leptonica'
+//     exclude group: 'org.bytedeco', module: 'libdc1394'
+//     exclude group: 'org.bytedeco', module: 'libfreenect2'
+//     exclude group: 'org.bytedeco', module: 'libfreenect'
+//     exclude group: 'org.bytedeco', module: 'librealsense'
+//     exclude group: 'org.bytedeco', module: 'tesseract'
+//     exclude group: 'org.bytedeco', module: 'videoinput'
+//     exclude group: 'org.bytedeco', module: 'artoolkitplus'
+//     exclude group: 'org.bytedeco', module: 'openblas'
+//     exclude group: 'org.bytedeco', module: 'realsense'
+//   })
+//   implementation group: 'org.bytedeco', name: 'ffmpeg', version: "$ffmpegVersion-$javaCVVersion", classifier: 'android-arm'
+//   implementation group: 'org.bytedeco', name: 'ffmpeg', version: "$ffmpegVersion-$javaCVVersion", classifier: 'android-x86'
+//   implementation group: 'org.bytedeco', name: 'opencv', version: "$openCVVersion-$javaCVVersion", classifier: 'android-arm'
+//   implementation group: 'org.bytedeco', name: 'opencv', version: "$openCVVersion-$javaCVVersion", classifier: 'android-x86'
 //    implementation 'com.android.support:support-v4:' + computeSupportVersion()
 }
 

@@ -22,7 +22,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import org.bytedeco.javacpp.opencv_core.Mat;
+import org.opencv.core.Mat;
 import org.bytedeco.javacv.AndroidFrameConverter;
 import org.bytedeco.javacv.FFmpegFrameFilter;
 import org.bytedeco.javacv.Frame;
@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import static org.bytedeco.javacpp.avutil.AV_PIX_FMT_NV21;
+import static org.bytedeco.ffmpeg.global.avutil.AV_PIX_FMT_NV21;
 
 /**
  * This is the graphical object used to display a real-time preview of the Camera.
@@ -106,7 +106,7 @@ public class CvCameraPreview extends SurfaceView implements SurfaceHolder.Callba
     private Thread thread;
     private CvCameraViewListener listener;
     private AndroidFrameConverter converterToBitmap = new AndroidFrameConverter();
-    private OpenCVFrameConverter.ToMat converterToMat = new OpenCVFrameConverter.ToMat();
+    private OpenCVFrameConverter.ToOrgOpenCvCoreMat converterToMat = new OpenCVFrameConverter.ToOrgOpenCvCoreMat();
     private Bitmap cacheBitmap;
     protected Frame[] cameraFrame;
     private int state = STOPPED;
@@ -241,15 +241,15 @@ public class CvCameraPreview extends SurfaceView implements SurfaceHolder.Callba
         switch (state) {
             case STARTED:
                 onEnterStartedState();
-                if (listener != null) {
-                    listener.onCameraViewStarted(frameWidth, frameHeight);
-                }
+                // if (listener != null) {
+                //     listener.onCameraViewStarted(frameWidth, frameHeight);
+                // }
                 break;
             case STOPPED:
                 onEnterStoppedState();
-                if (listener != null) {
-                    listener.onCameraViewStopped();
-                }
+                // if (listener != null) {
+                //     listener.onCameraViewStopped();
+                // }
                 break;
         }
     }
@@ -267,7 +267,7 @@ public class CvCameraPreview extends SurfaceView implements SurfaceHolder.Callba
     private void onEnterStartedState() {
         Log.d(LOG_TAG, "call onEnterStartedState");
         /* Connect camera */
-        connectCamera();
+        // connectCamera();
 //         if (!connectCamera()) {
 //             AlertDialog ad = new AlertDialog.Builder(getContext()).create();
 //             ad.setCancelable(false); // This blocks the 'BACK' button
@@ -359,6 +359,10 @@ public class CvCameraPreview extends SurfaceView implements SurfaceHolder.Callba
         thread = new Thread(new CameraWorker());
         thread.start();
 
+        if (listener != null) {
+            listener.onCameraViewStarted(frameWidth, frameHeight);
+        }
+
         return true;
     }
 
@@ -391,6 +395,10 @@ public class CvCameraPreview extends SurfaceView implements SurfaceHolder.Callba
 
         /* Now release camera */
         releaseCamera();
+
+        if (listener != null) {
+                    listener.onCameraViewStopped();
+                }
 
         cameraFrameReady = false;
     }
