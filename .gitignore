@@ -20,3 +20,4 @@ Pods
 /plugin/platforms/android/nativescript_*.aar
 *.xcuserdatad
 *.lock
+pnpm-lock.yaml
