@@ -6,7 +6,6 @@
 //}
 allprojects {
   repositories {
-    jcenter()
   }
 }
 
@@ -45,5 +44,5 @@ android {
   }
 }
 dependencies {
-  api 'com.otaliastudios:cameraview:2.6.3'
+  implementation 'com.otaliastudios:cameraview:2.7.1'
 }

@@ -7,7 +7,7 @@ let resizedImage: cv2.Mat;
 let edgesImage: cv2.Mat;
 
 export function resize(img: cv2.Mat, output: cv2.Mat, height = SMALL_HEIGHT, allways = false) {
-    let rat = height / img.size().height;
+    const rat = height / img.size().height;
     cv2.Imgproc.resize(img, output, new cv2.Size(rat * img.size().width, height));
 
     output = img;
@@ -28,8 +28,7 @@ function intersection(a, b) {
     return [x, y, w, h];
 }
 
-let hierarchyMat:cv2.Mat;
-
+let hierarchyMat: cv2.Mat;
 
 export function find_page_contours(edges: cv2.Mat, img: cv2.Mat, full = false) {
     // Getting contours
@@ -41,9 +40,9 @@ export function find_page_contours(edges: cv2.Mat, img: cv2.Mat, full = false) {
     const height = img.size().height;
     const width = img.size().width;
 
-    let contours: any[] = [];
-    let page_contours = [];
-    let temp_contours = [];
+    const contours: any[] = [];
+    const page_contours = [];
+    const temp_contours = [];
 
     // const max_area = MIN_COUNTOUR_AREA;
     for (let index = 0; index < nContours.size(); index++) {
@@ -60,11 +59,10 @@ export function find_page_contours(edges: cv2.Mat, img: cv2.Mat, full = false) {
     const MAX_COUNTOUR_AREA = height * width * 0.99 * 0.99;
     const sorted = contours.filter(c => MIN_COUNTOUR_AREA < c.area && c.area < MAX_COUNTOUR_AREA).sort((a, b) => b.area - a.area);
 
-
     for (let index = 0; index < sorted.length; index++) {
         const c = sorted[index];
 
-        let cnt = c.contour;
+        const cnt = c.contour;
         if (isAndroid) {
             const floatPoint = new org.opencv.core.MatOfPoint2f();
             cnt.convertTo(floatPoint, cv2.CvType.CV_32F);
@@ -80,11 +78,11 @@ export function find_page_contours(edges: cv2.Mat, img: cv2.Mat, full = false) {
             break;
         }
         // console.log('contour', index, MIN_COUNTOUR_AREA, area, MAX_COUNTOUR_AREA, length, cv2.Imgproc.isContourConvex(cnt));
-        // const maxLength = 4;
-        if (length == 4 && cv2.Imgproc.isContourConvex(cnt)) {
+        const maxLength = 12;
+        if (length >= 4 && length < maxLength && cv2.Imgproc.isContourConvex(cnt)) {
             let tooClose = false;
             for (let j = 0; j < temp_contours.length; j++) {
-                let cnt2 = temp_contours[j];
+                const cnt2 = temp_contours[j];
                 const inter = intersection(cv2.Imgproc.boundingRect(cnt2), cv2.Imgproc.boundingRect(cnt));
                 if (inter[2] * inter[3] > 0) {
                     tooClose = true;
@@ -92,21 +90,45 @@ export function find_page_contours(edges: cv2.Mat, img: cv2.Mat, full = false) {
                 }
             }
             if (!tooClose) {
-                const points = cnt.toArray();
+                // const points = cnt.toArray();
                 temp_contours.push(cnt);
+                const floatPoint = new org.opencv.core.MatOfPoint2f();
+                cnt.convertTo(floatPoint, cv2.CvType.CV_32F);
+                // const rect = cv2.Imgproc.boundingRect(cnt);
+                const rotrect = cv2.Imgproc.minAreaRect(floatPoint);
+                // if (!rotrect) {
+                //     continue;
+                // }
                 const offset = 0;
+                const box = new cv2.Mat();
+                cv2.Imgproc.boxPoints(rotrect, box);
+                const rows = box.rows();
                 const realPoints = [];
-                for (let j = 0; j < length; j++) {
-                    const element = points[j];
-                    realPoints.push([element.x + offset, element.y + offset]);
+                const nArray = Array.create('int', 2);
+                nArray[1] = 0;
+                for (let index = 0; index < rows; index++) {
+                    nArray[0] = index;
+                    // console.log('test', index, rows, box.get(0,index).len);
+                    // const element = box.get(index,0);
+                    realPoints.push([box.get(index,0)[0] + offset, box.get(index,1)[0] + offset]);
                 }
+                // const realPoints = [
+                //     [rect.x, rect.y],
+                //     [rect.x + rect.width - 1, rect.y],
+                //     [rect.x + rect.width - 1, rect.y + rect.height - 1],
+                //     [rect.x, rect.y + rect.height - 1]
+                // ];
+                // for (let j = 0; j < length; j++) {
+                //     const element = points[j];
+                //     realPoints.push([element.x + offset, element.y + offset]);
+                // }
 
                 page_contours.push(realPoints);
             }
         }
     }
-    // return page_contours;
-    return page_contours.map(c => order_points(c));
+    return page_contours;
+    // return page_contours.map(c => order_points(c));
 }
 
 function norm(p1: [number, number], p2: [number, number]) {
@@ -126,7 +148,7 @@ function order_points(pts: [number, number][]) {
     // grab the left-most and right-most points from the sorted
     // x-roodinate points
     let leftMost = xSorted.slice(0, 2);
-    let rightMost = xSorted.slice(-2);
+    const rightMost = xSorted.slice(-2);
 
     // now, sort the left-most coordinates according to their
     // y-coordinates so we can grab the top-left and bottom-left
@@ -156,24 +178,20 @@ function matFromArray(rows, cols, type, array) {
     const mat = new cv2.Mat(rows, cols, type);
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
-            const nArray = Array.create('float', 1)
-            nArray[0] = array[i][j]
-            mat.put(i, j,nArray);
+            const nArray = Array.create('float', 1);
+            nArray[0] = array[i][j];
+            mat.put(i, j, nArray);
         }
     }
     return mat;
 }
-export function persp_transform(img: cv2.Mat, s_points: [number, number][], ratio:number = 1) {
+export function persp_transform(img: cv2.Mat, s_points: [number, number][], ratio: number = 1) {
     if (ratio !== 1) {
-
-        s_points = s_points.map(p => {
-            return [Math.round(p[0] * ratio), Math.round(p[1] * ratio)];
-        })
+        s_points = s_points.map(p => [Math.round(p[0] * ratio), Math.round(p[1] * ratio)]);
     }
     const sMat = matFromArray(s_points.length, 2, cv2.CvType.CV_32F, s_points);
     // Euclidean distance - calculate maximum height and width
     const [tl, tr, br, bl] = s_points;
-
 
     //  compute the width of the new image, which will be the
     //  maximum distance between bottom-right and bottom-left
@@ -229,12 +247,11 @@ function edges_det(img: cv2.Mat, out, min_val, max_val, full = false) {
     }
     cv2.Imgproc.morphologyEx(out, out, cv2.Imgproc.MORPH_CLOSE, kernel9);
 
-
     cv2.Imgproc.Canny(out, out, min_val, max_val);
     if (!kernel2) {
         kernel2 = cv2.Imgproc.getStructuringElement(cv2.Imgproc.MORPH_RECT, new cv2.Size(2, 2));
     }
-    cv2.Imgproc.dilate(out, out, kernel2)
+    cv2.Imgproc.dilate(out, out, kernel2);
     return out;
 }
 

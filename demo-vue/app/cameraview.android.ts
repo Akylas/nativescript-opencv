@@ -5,12 +5,12 @@ export interface CameraListener extends com.otaliastudios.cameraview.CameraListe
     new (owner: WeakRef<CameraView>): CameraListener;
     // owner: LogEventListener;
 }
-
 let CameraListener: CameraListener;
 function initCameraListener() {
     if (CameraListener) {
         return;
     }
+    @NativeClass
     class CameraListenerImpl extends com.otaliastudios.cameraview.CameraListener {
         constructor(private owner: WeakRef<CameraView>) {
             super();

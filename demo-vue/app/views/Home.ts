@@ -1,14 +1,11 @@
-import { getExamples } from '../examples';
-import { ImageSource, fromNativeSource } from '@nativescript/core/image-source/image-source';
-import * as cv from 'nativescript-opencv';
-import * as _ from 'lodash';
-import { Image } from '@nativescript/core/ui/image/image';
 import { android as androidApp } from '@nativescript/core/application';
-import { isIOS } from '@nativescript/core/platform';
-import { Canvas, Matrix, Paint } from 'nativescript-canvas';
-import * as camera from 'nativescript-camera';
-import { WorkerPostEvent, WorkerEventType, WorkerResult } from '~/workers/BaseWorker';
-import * as Worker from 'nativescript-worker-loader!~/workers/ImageWorker';
+import { ImageSource } from '@nativescript/core/image-source';
+import { Image } from '@nativescript/core';
+import { Canvas, Matrix, Paint, Path, Style } from '@nativescript-community/ui-canvas';
+import * as cv from 'nativescript-opencv';
+import { WorkerEventType, WorkerResult } from '~/workers/BaseWorker';
+import { getExamples } from '../examples';
+import { request } from '@nativescript-community/perms';
 // import Worker from '~/workers/ImageWorker';
 let grayImage: cv.Mat;
 let worker = null;
@@ -16,7 +13,7 @@ const paint = new Paint();
 paint.setColor('red');
 paint.setStrokeWidth(1);
 function runOnUiThread(fn) {
-    if (isIOS) {
+    if (__IOS__) {
         NSOperationQueue.mainQueue.addOperationWithBlock(fn);
     } else {
         (androidApp.foregroundActivity as androidx.appcompat.app.AppCompatActivity).runOnUiThread(
@@ -27,6 +24,17 @@ function runOnUiThread(fn) {
             })
         );
     }
+}
+
+function norm(p1: [number, number], p2: [number, number]) {
+    const res = [p1[0] - p2[0], p1[1] - p2[1]];
+    return Math.sqrt(Math.pow(res[0], 2) + Math.pow(res[1], 2));
+}
+function contourCenter(c): [number, number] {
+    return [c[1][0] - c[0][0], c[1][1] - c[0][1]];
+}
+function contourArea(c) {
+    return (c[1][0] - c[0][0]) * (c[1][1] - c[0][1]);
 }
 
 function getColor(index) {
@@ -47,14 +55,14 @@ function getColor(index) {
 }
 
 function isOnUiThread() {
-    if (isIOS) {
+    if (__IOS__) {
         return NSOperationQueue.currentQueue === NSOperationQueue.mainQueue;
     } else {
         return android.os.Looper.myLooper() === android.os.Looper.getMainLooper();
     }
 }
 
-const messagePromises: { [key: string]: Array<{ resolve: Function; reject: Function; timeoutTimer: NodeJS.Timer }> } = {};
+const messagePromises: { [key: string]: { resolve: Function; reject: Function; timeoutTimer: NodeJS.Timer }[] } = {};
 
 let contourMat;
 export default {
@@ -65,7 +73,7 @@ export default {
       </ActionBar>
       <GridLayout rows="*,auto" backgroundColor="black" height="100%">
       <CameraView rowSpan="2" ref="cameraPreview" @frame="processFrame"/>
-        <Image rowSpan="2"  ref="contoursView" stretch="aspectFit" src="image" width="50%" height="30%" horizontalAlignment="right" verticalAlignment="bottom" />
+        <Image rowSpan="2"  ref="contoursView" stretch="aspectFit" :src="image" width="50%" height="30%" horizontalAlignment="right" verticalAlignment="bottom" />
         <CanvasView ref="canvasView" rowSpan="2"  @draw="onCanvasDraw($event)"/>
         <Button v-show="contours && contours.length>0" text="takePicture" @tap="takePicture" verticalAlignment="bottom" horizontalAlignment="center"/>
         <Button text="torch" @tap="switchTorch" verticalAlignment="top" horizontalAlignment="right"/>
@@ -83,7 +91,7 @@ export default {
     data() {
         return {
             examples: getExamples(),
-            contours: null,
+            contours: [],
             matrix: new Matrix(),
             images: [],
             pausePreview: false,
@@ -93,13 +101,76 @@ export default {
         };
     },
     mounted() {
-        worker = new Worker();
+        worker = new Worker('~/workers/ImageWorker');
+        this.contours = [];
         worker.onmessage = this.onWorkerMessage;
     },
     destroy() {
         this.worker.postMessage({ type: 'terminate' });
     },
     methods: {
+        startCamera() {
+            const camView = this.$refs.cameraPreview.nativeView;
+            contourMat = null;
+            if (camView.cameraStarted()) {
+                camView.stopCamera();
+                this.$refs.camButton.text = 'start';
+            } else {
+                request('camera').then(
+                    function success() {
+                        camView.startCamera();
+                    },
+                    function failure() {
+                        // permission request rejected
+                        // ... tell the user ...
+                    }
+                );
+                this.$refs.camButton.text = 'stop';
+            }
+        },
+
+        onWorkerMessage(event: {
+            data: {
+                type: WorkerEventType;
+                result: WorkerResult;
+                full?: boolean;
+                contours?: number[][];
+                width?: number;
+                height?: number;
+                originalWidth?: number;
+                originaHeight?: number;
+                id?: number;
+                rotation?: number;
+                nativeDataKeys: string[];
+                nativeDatas?: { [k: string]: any };
+            };
+        }) {
+            const data = event.data;
+            const id = data.id;
+
+            if (id && messagePromises.hasOwnProperty(id)) {
+                messagePromises[id].forEach(function(executor) {
+                    executor.timeoutTimer && clearTimeout(executor.timeoutTimer);
+                    // if (isError) {
+                    // executor.reject(createErrorFromMessage(message));
+                    // } else {
+                    const id = data.id;
+                    if (data.nativeDataKeys.length > 0) {
+                        const nativeDatas: { [k: string]: any } = {};
+                        data.nativeDataKeys.forEach(k => {
+                            nativeDatas[k] = (org.nativescript as any).demovueopencv.WorkersContext.getValue(`${id}_${k}`);
+                            (org.nativescript as any).demovueopencv.WorkersContext.setValue(`${id}_${k}`, null);
+                        });
+                        data.nativeDatas = nativeDatas;
+                    }
+
+                    executor.resolve(data);
+                    // }
+                });
+                delete messagePromises[id];
+            }
+        },
+
         onImageTap(event) {
             this.pausePreview = false;
             this.currentImage = event.item;
@@ -139,74 +210,11 @@ export default {
                 );
             });
         },
-        onWorkerMessage(event: {
-            data: {
-                type: WorkerEventType;
-                result: WorkerResult;
-                full?: boolean;
-                contours?: number[][];
-                width?: number;
-                height?: number;
-                originalWidth?: number;
-                originaHeight?: number;
-                id?: number;
-                rotation?: number;
-                nativeDataKeys: string[];
-                nativeDatas?: { [k: string]: any };
-            };
-        }) {
-            const data = event.data;
-            const id = data.id;
-
-            if (id && messagePromises.hasOwnProperty(id)) {
-                messagePromises[id].forEach(function(executor) {
-                    executor.timeoutTimer && clearTimeout(executor.timeoutTimer);
-                    // if (isError) {
-                    // executor.reject(createErrorFromMessage(message));
-                    // } else {
-                    const id = data.id;
-                    if (data.nativeDataKeys.length > 0) {
-                        const nativeDatas: { [k: string]: any } = {};
-                        data.nativeDataKeys.forEach(k => {
-                            nativeDatas[k] = (org.nativescript as any).demovueopencv.WorkersContext.getValue(`${id}_${k}`);
-                            (org.nativescript as any).demovueopencv.WorkersContext.setValue(`${id}_${k}`, null);
-                        });
-                        data.nativeDatas = nativeDatas;
-                        ``;
-                    }
-
-                    executor.resolve(data);
-                    // }
-                });
-                delete messagePromises[id];
-            }
-        },
         handleContours(contours, rotation, w, h) {
-            
             this.showContour(contours, rotation, w, h);
         },
-        startCamera() {
-            const camView = (this.$refs.cameraPreview as any).nativeView;
-            contourMat = null;
-            if (camView.cameraStarted()) {
-                camView.stopCamera();
-                (this.$refs.camButton as any).text = 'start';
-            } else {
-                camera.requestPermissions().then(
-                    function success() {
-                        camView.startCamera();
-                    },
-                    function failure() {
-                        // permission request rejected
-                        // ... tell the user ...
-                    }
-                );
-                (this.$refs.camButton as any).text = 'stop';
-            }
-        },
-
         showMat(mat, rotation = 0) {
-            const imageView = (this.$refs.contoursView as any).nativeView as Image;
+            const imageView = this.$refs.contoursView.nativeView as Image;
             if (!mat) {
                 imageView.imageSource = null;
                 return;
@@ -224,8 +232,20 @@ export default {
         },
         showContour(contours, rotation, width, height) {
             if (this.contours !== contours) {
+                // const newContours = [];
+                // contours.forEach((c, i) => {
+                //     const toCompare = this.contours[i];
+                //     const currentArea = toCompare && contourArea(toCompare);
+                //     // console.log('test', toCompare && norm(contourCenter(toCompare), contourCenter(c)), currentArea, toCompare && Math.abs(currentArea - contourArea(c)));
+                //     if (toCompare && norm(contourCenter(toCompare), contourCenter(c)) < 2 && Math.abs(currentArea - contourArea(c)) < 0.1* currentArea) {
+                //         newContours[i] = toCompare;
+                //     } else {
+                //         newContours[i] = c;
+                //     }
+                // });
                 // console.log('showContour', contour, rotation, width, height);
                 this.contours = contours;
+                // this.contours = newContours;
                 this.contourWidth = width;
                 this.contourHeight = height;
                 this.contourRotation = rotation;
@@ -253,7 +273,7 @@ export default {
             }
             this.sendMessageToWorker({ image: grayImage }, { width: w, height: h, rotation: viewRotation }).then(data => {
                 this.handleContours(data.contours, data.rotation, data.width, data.height);
-                // this.showMat(data.nativeDatas.edgesImage, data.rotation);
+                this.showMat(data.nativeDatas.edgesImage, data.rotation);
             });
         },
         onCanvasDraw(event: { canvas: Canvas }) {
@@ -262,7 +282,7 @@ export default {
             const w = canvas.getWidth();
             const h = canvas.getHeight();
             const contours = this.contours;
-            if (contours) {
+            if (contours.length > 0) {
                 const imgW = this.contourWidth;
                 const imgH = this.contourHeight;
                 const scale = h / imgW;
@@ -273,8 +293,7 @@ export default {
                 canvas.rotate(this.contourRotation, w / 2, h / 2);
                 canvas.translate(w / 2 - imgW / 2, h / 2 - imgH / 2);
                 contours.forEach((c, i) => {
-                    paint.color = getColor(i);
-                    let toDraw = [];
+                    const toDraw = [];
                     for (let index = 0; index < c.length; index++) {
                         const element = c[index];
                         toDraw.push(element[0]);
@@ -286,7 +305,15 @@ export default {
                     }
                     toDraw.push(toDraw[0]);
                     toDraw.push(toDraw[1]);
-                    canvas.drawLines(toDraw, paint);
+                    const path = new Path();
+                    path.setLines(toDraw);
+                    paint.color = getColor(i);
+                    paint.setStyle(Style.FILL);
+                    paint.setAlpha(125);
+                    canvas.drawPath(path, paint);
+                    paint.setStyle(Style.STROKE);
+                    paint.setAlpha(255);
+                    canvas.drawPath(path, paint);
                 });
                 canvas.restore();
             }
@@ -298,7 +325,7 @@ export default {
                 .then((res: { data: any; rotation: number }) => {
                     // console.log('got image', res.size, res.rotation);
                     // let mat = cv.matFromImage(res.image);
-                    let mat = cv.Imgcodecs.imdecode(new cv.MatOfByte(res.data), cv.Imgcodecs.IMREAD_COLOR);
+                    const mat = cv.Imgcodecs.imdecode(new cv.MatOfByte(res.data), cv.Imgcodecs.IMREAD_COLOR);
                     cv.Imgproc.cvtColor(mat, mat, cv.Imgproc.COLOR_BGR2RGB);
                     // this.showMat(mat);
                     const size = mat.size();

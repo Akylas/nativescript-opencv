@@ -36,12 +36,15 @@ export function findAndDrawContours(mat) {
     cv.Imgproc.Canny(grayImageFiltered, edgesImage, 60, 120);
     // cv.Imgproc.Canny(grayImageFiltered, edgesImageFiltered, 60, 120);
 
+    //@ts-ignore
     const contours = cv.Imgproc.findContours(edgesImage, hierarchyMat, cv.Imgproc.RETR_LIST, cv.Imgproc.CHAIN_APPROX_SIMPLE);
-    java.util.Collections.sort(contours as any, new java.util.Comparator({
 
-        compare( lhs,  rhs):number {
-            const one = cv.Imgproc.contourArea(rhs)
-            const tow = cv.Imgproc.contourArea(lhs)
+
+    //@ts-ignore
+    java.util.Collections.sort(contours, new java.util.Comparator({
+        compare( lhs,  rhs): number {
+            const one = cv.Imgproc.contourArea(rhs);
+            const tow = cv.Imgproc.contourArea(lhs);
             if (one === tow) {
                 return 0;
             } else if (one < tow) {
@@ -49,12 +52,12 @@ export function findAndDrawContours(mat) {
             } else {
                 return 1;
             }
-        }, 
+        },
         equals(value) {
             return false;
         }
     }));
-    
+
     // console.log('findAndDrawContours', height, width, ratio, contours.size());
     // console.log('findAndDrawContours', (Date.now() - start), size.width, size.height, width, height, contours.size());
 
@@ -68,7 +71,7 @@ export function findAndDrawContours(mat) {
 //     const size = new cv.Size(width,height);
 // for (let index = 0; index < contours.size(); index++) {
 //     const c = contours.get(index);
-    
+
 // }
 //             const c2f = new MatOfPoint2f(c.toArray());
 //             const peri = cv.Imgproc.arcLength(c2f, true);

@@ -3,47 +3,28 @@
   "license": "SEE LICENSE IN LICENSE.md",
   "readme": "README.md",
   "repository": "http://www.github.com/Akylas/nativescript-opencv.git",
-  "nativescript": {
-    "id": "org.nativescript.demovueopencv",
-    "tns-android": {
-      "version": "6.4.1"
-    }
-  },
   "dependencies": {
-    "@nativescript/core": "^6.5.12",
-    "nativescript-camera": "5.0.0-androidx",
-    "nativescript-canvas": "^3.0.10",
-    "nativescript-foss-sidedrawer": "^2.0.0",
+    "@nativescript-community/perms": "^2.2.7",
+    "@nativescript-community/ui-canvas": "^4.4.3",
+    "@nativescript/core": "~8.2.5",
+    "nativescript-camera": "4.5.0",
     "nativescript-opencv": "../plugin",
     "nativescript-theme-core": "~2.0.24",
-    "nativescript-vue": "~2.7.0",
-    "vue-class-component": "^7.2.5"
+    "nativescript-vue": "~2.9.2",
+    "vue-class-component": "^7.2.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "babel-loader": "^8.1.0",
-    "clean-webpack-plugin": "^3.0.0",
-    "copy-webpack-plugin": "5.1.1",
+    "@nativescript/android": "8.2.4",
+    "@nativescript/types": "~8.2.0",
+    "@nativescript/webpack": "~5.0.6",
     "cross-var": "^1.1.0",
-    "css-loader": "^3.6.0",
-    "fsevents": "2.1.3",
-    "nativescript-dev-webpack": "^1.5.1",
-    "nativescript-vue-template-compiler": "^2.7.0",
-    "node-sass": "^4.14.1",
-    "sass-loader": "^8.0.2",
+    "nativescript-vue-template-compiler": "^2.9.2",
+    "sass": "~1.53.0",
     "scss-symbols-parser": "^2.0.1",
-    "semver": "7.3.2",
-    "string-replace-loader": "^2.3.0",
-    "tns-platform-declarations": "^6.5.12",
-    "typescript": "^3.9.7",
-    "vue": "^2.6.11",
-    "vue-loader": "^15.9.3",
-    "vue-property-decorator": "^8.5.1",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "string-replace-loader": "^3.1.0",
+    "typescript": "~4.7.4",
+    "vue": "^3.2.37",
+    "vue-property-decorator": "^9.1.2"
   },
-  "scripts": {
-    "tslint": "npm i && tslint --config '../tslint.json' 'app/**/*.ts' --exclude '**/node_modules/**'"
-  }
+  "main": "./app/main"
 }
