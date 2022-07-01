@@ -246,6 +246,7 @@ export namespace Imgproc {
 
 export { CV_CHAIN_APPROX_SIMPLE };
 
+
 // class CVMat extends OpenCVMat {
 //     release() {
 //         this.releaseMat();
@@ -327,7 +328,17 @@ export class Mat {
 //     // console.log('createMat', rows, cols, type, result.size().width, result.size().height);
 //     return result;
 // }
-
+export function matFromImage(value: ImageSource | UIImage) {
+    try {
+        if (value instanceof ImageSource) {
+            value = value.ios;
+        }
+        return OpenCVMat.alloc().initWithImage(value as UIImage);
+    } catch (err) {
+        console.error('matFromImage', err);
+        return null;
+    }
+}
 // export function imread(value: any): OpenCVMat {
 //     // console.log('imread', value);
 //     if (value instanceof ImageSource) {

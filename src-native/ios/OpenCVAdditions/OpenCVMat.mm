@@ -96,18 +96,11 @@
 }
 - (id)initWithImage:(UIImage*)image
 {
-  // NSLog(@"initWithImage");
   self = [super init];
-  
-  
   if (self) {
     CFTimeInterval startTime = CACurrentMediaTime();
-//    cv::Mat* mat = new cv::Mat();
     CGImageAlphaInfo ainfo = CGImageGetAlphaInfo( image.CGImage );
     UIImageToMat( image, _mat, ainfo != kCGImageAlphaNone );
-    // NSLog(@"initWithImage2 %d %d", mat->cols, mat->rows);
-//    [self setMat:mat];
-    NSLog(@"initWithImage duration %f", CACurrentMediaTime() - startTime);
     owned = true;
   }
   

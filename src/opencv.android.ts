@@ -1,11 +1,12 @@
-// import { CvCameraPreviewBase } from './opencv.common';
-import { Color } from '@nativescript/core/color';
+import { Color, ImageSource } from '@nativescript/core';
 
 let OpenCVMat: typeof org.opencv.core.Mat;
 let CVScalar: typeof org.opencv.core.Scalar;
 let CVImgproc: typeof org.opencv.imgproc.Imgproc;
 let CVSize: typeof org.opencv.core.Size;
 let CVCore: typeof org.opencv.core.Core;
+let CVDnn: typeof org.opencv.dnn.Dnn;
+let CVConverters: typeof org.opencv.utils.Converters;
 let CVImgcodecs: typeof org.opencv.imgcodecs.Imgcodecs;
 let CvType: typeof org.opencv.core.CvType;
 let CVPoint: typeof org.opencv.core.Point;
@@ -17,7 +18,7 @@ type OpenCVClass<T> = T & {
 
 function createOpenCVClass<T>(clas: Constructor<T>) {
     const theClass = clas;
-    const theClassName = clas.prototype.name;
+    // const theClassName = clas.prototype.name;
     return class {
         _native: T;
         constructor(...args) {
@@ -47,7 +48,7 @@ function createOpenCVClass<T>(clas: Constructor<T>) {
                     try {
                         return native[methodName](...args);
                     } catch (err) {
-                        console.error('error calling', theClassName, methodName, err);
+                        console.error('error calling', methodName, err);
                         return null;
                     }
                 };
@@ -58,18 +59,51 @@ function createOpenCVClass<T>(clas: Constructor<T>) {
     };
 }
 
+function getCVImgproc() {
+    if (!CVImgproc) {
+        CVImgproc = org.opencv.imgproc.Imgproc;
+    }
+    return CVImgproc;
+}
+
+function getCVDnn() {
+    if (!CVDnn) {
+        CVDnn = org.opencv.dnn.Dnn;
+    }
+    return CVDnn;
+}
+function getCVConverters() {
+    if (!CVConverters) {
+        CVConverters = org.opencv.utils.Converters;
+    }
+    return CVConverters;
+}
+function getCVImgcodecs() {
+    if (!CVImgcodecs) {
+        CVImgcodecs = org.opencv.imgcodecs.Imgcodecs;
+    }
+    return CVImgcodecs;
+}
+function getCVCore() {
+    if (!CVCore) {
+        CVCore = org.opencv.core.Core;
+    }
+    return CVCore;
+}
+let initialized = false;
 export function init() {
-    if (OpenCVMat) {
+    if (initialized) {
         return;
     }
-    OpenCVMat = org.opencv.core.Mat as any;
+    initialized = true;
     CVScalar = org.opencv.core.Scalar;
     CVSize = org.opencv.core.Size;
-    CVImgproc = org.opencv.imgproc.Imgproc;
-    CVCore = org.opencv.core.Core;
+    OpenCVMat = org.opencv.core.Mat;
+    // CVCore = org.opencv.core.Core;
     CVPoint = org.opencv.core.Point;
     CvType = org.opencv.core.CvType;
-    CVImgcodecs = org.opencv.imgcodecs.Imgcodecs;
+    // CVConverters = org.opencv.utils.Converters;
+    // java.lang.System.loadLibrary('opencv_java4');
     if (!org.opencv.android.OpenCVLoader.initDebug()) {
         console.error('OpenCV failed to load!');
     }
@@ -79,7 +113,7 @@ export const Imgcodecs = new Proxy(
     {},
     {
         get(target, name, receiver) {
-            const nValue = CVImgcodecs[name];
+            const nValue = getCVImgcodecs()[name];
             if (nValue) {
                 if (typeof nValue === 'function') {
                     return function (...args) {
@@ -111,7 +145,72 @@ export const Core = new Proxy(
     {},
     {
         get(target, name, receiver) {
-            const nValue = CVCore[name];
+            const nValue = getCVCore()[name];
+            if (nValue) {
+                if (typeof nValue === 'function') {
+                    return function (...args) {
+                        for (let index = 0; index < args.length; index++) {
+                            const element = args[index];
+                            if (element && element._native) {
+                                args[index] = element._native;
+                            }
+                        }
+                        let returnValue;
+
+                        try {
+                            const result = nValue(...args);
+                            return returnValue || result;
+                        } catch (err) {
+                            console.error('error calling Core', name, err);
+                            return null;
+                        }
+                    };
+                }
+                return nValue;
+            } else {
+                return Reflect.get(target, name, receiver);
+            }
+        },
+    }
+);
+
+export const Dnn = new Proxy(
+    {},
+    {
+        get(target, name, receiver) {
+            const nValue = getCVDnn()[name];
+            if (nValue) {
+                if (typeof nValue === 'function') {
+                    return function (...args) {
+                        for (let index = 0; index < args.length; index++) {
+                            const element = args[index];
+                            if (element && element._native) {
+                                args[index] = element._native;
+                            }
+                        }
+                        let returnValue;
+
+                        try {
+                            const result = nValue(...args);
+                            return returnValue || result;
+                        } catch (err) {
+                            console.error('error calling Core', name, err);
+                            return null;
+                        }
+                    };
+                }
+                return nValue;
+            } else {
+                return Reflect.get(target, name, receiver);
+            }
+        },
+    }
+);
+export const Converters = new Proxy(
+    {},
+    {
+        get(target, name, receiver) {
+            const nValue = getCVConverters()[name];
             if (nValue) {
                 if (typeof nValue === 'function') {
                     return function (...args) {
@@ -142,15 +241,28 @@ export const Core = new Proxy(
 
 export function imageFromMat(mat: any) {
     const size = mat.size();
-    const bmp = android.graphics.Bitmap.createBitmap(size.width, size.height, android.graphics.Bitmap.Config.ARGB_8888);
     //Imgproc.cvtColor(seedsImage, tmp, Imgproc.COLOR_RGB2BGRA);
-    org.opencv.android.Utils.matToBitmap(mat._native || mat, bmp);
-    return bmp;
+    try {
+        const bmp = android.graphics.Bitmap.createBitmap(size.width, size.height, android.graphics.Bitmap.Config.ARGB_8888);
+        org.opencv.android.Utils.matToBitmap(mat._native || mat, bmp);
+        return bmp;
+    } catch (err) {
+        console.error('imageFromMat', err);
+        return null;
+    }
 }
-export function matFromImage(bmp: android.graphics.Bitmap) {
-    const mat = new org.opencv.core.Mat();
-    org.opencv.android.Utils.bitmapToMat(bmp, mat);
-    return mat;
+export function matFromImage( value: ImageSource | android.graphics.Bitmap) {
+    try {
+        if (value instanceof ImageSource) {
+            value = value.android;
+        }
+        const mat = new OpenCVMat();
+        org.opencv.android.Utils.bitmapToMat(value as android.graphics.Bitmap, mat);
+        return mat;
+    } catch (err) {
+        console.error('matFromImage', err);
+        return null;
+    }
 }
 
 function createArrayBuffer(length: number, useInts = false) {
@@ -190,7 +302,7 @@ export const Imgproc = new Proxy(
     {},
     {
         get(target, name, receiver) {
-            const nValue = CVImgproc[name];
+            const nValue = getCVImgproc()[name];
             if (nValue) {
                 if (typeof nValue === 'function') {
                     return function (...args) {
@@ -228,16 +340,24 @@ export class Mat {
     constructor(...args) {
         for (let index = 0; index < args.length; index++) {
             const element = args[index];
+            if (element._native) {
+                args[index] = element._native;
+            }
             if (Array.isArray(element)) {
                 args[index] = arrayNativeBuffer(element);
             }
         }
-        // @ts-ignore
-        this._native = new org.opencv.core.Mat(...args);
+        try {
+            // @ts-ignore
+            this._native = new OpenCVMat(...args);
+        } catch (err) {
+            console.error('error creating Mat', err);
+            return null;
+        }
         return new Proxy(this, this);
     }
     static ones(...args) {
-        return org.opencv.core.Mat.ones.apply(org.opencv.core.Mat, args);
+        return OpenCVMat.ones.apply(OpenCVMat, args);
     }
     get(target, name, receiver) {
         const native = this._native;
@@ -275,6 +395,11 @@ export const MatOfByte = createOpenCVClass(org.opencv.core.MatOfByte);
 export const MatOfFloat = createOpenCVClass(org.opencv.core.MatOfFloat);
 export const MatOfDouble = createOpenCVClass(org.opencv.core.MatOfDouble);
 export const MatOfDMatch = createOpenCVClass(org.opencv.core.MatOfDMatch);
+export const MatOfPoint = createOpenCVClass(org.opencv.core.MatOfPoint);
+export const MatOfPoint2f = createOpenCVClass(org.opencv.core.MatOfPoint2f);
+export const MatOfInt = createOpenCVClass(org.opencv.core.MatOfInt);
+export const MatOfRect = createOpenCVClass(org.opencv.core.MatOfRect);
+
 export { CVSize as Size, CVScalar as Scalar, CVPoint as Point, CvType };
 
 // export function createMat(rows?, cols?, type?) {
