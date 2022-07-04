@@ -10,6 +10,7 @@ let CVConverters: typeof org.opencv.utils.Converters;
 let CVImgcodecs: typeof org.opencv.imgcodecs.Imgcodecs;
 let CvType: typeof org.opencv.core.CvType;
 let CVPoint: typeof org.opencv.core.Point;
+let CVRect: typeof org.opencv.core.Rect;
 
 type Constructor<T> = new (...args: any[]) => T;
 type OpenCVClass<T> = T & {
@@ -101,6 +102,7 @@ export function init() {
     OpenCVMat = org.opencv.core.Mat;
     // CVCore = org.opencv.core.Core;
     CVPoint = org.opencv.core.Point;
+    CVRect = org.opencv.core.Rect;
     CvType = org.opencv.core.CvType;
     // CVConverters = org.opencv.utils.Converters;
     // java.lang.System.loadLibrary('opencv_java4');
@@ -400,7 +402,7 @@ export const MatOfPoint2f = createOpenCVClass(org.opencv.core.MatOfPoint2f);
 export const MatOfInt = createOpenCVClass(org.opencv.core.MatOfInt);
 export const MatOfRect = createOpenCVClass(org.opencv.core.MatOfRect);
 
-export { CVSize as Size, CVScalar as Scalar, CVPoint as Point, CvType };
+export { CVSize as Size, CVScalar as Scalar, CVPoint as Point, CVRect as Rect, CvType };
 
 // export function createMat(rows?, cols?, type?) {
 //     // console.log('createMat', rows, cols, type);
