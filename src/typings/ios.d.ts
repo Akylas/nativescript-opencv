@@ -16,14 +16,14 @@ declare class CvCameraPreview extends UIImageView {
 interface CvCameraPreviewDelegate extends NSObjectProtocol {
     processOpenCVMat(image: OpenCVMat): void;
 }
-declare var CvCameraPreviewDelegate: {
+declare let CvCameraPreviewDelegate: {
     prototype: CvCameraPreviewDelegate;
 };
 
 declare class ContoursVector {
     size(): number;
-	get(i: number): org.opencv.core.MatOfPoint;
-	contourArea(index: number, oriented: boolean): number;
+    get(i: number): org.opencv.core.MatOfPoint;
+    contourArea(index: number, oriented: boolean): number;
 }
 
 declare class OpenCVMat extends NSObject {
@@ -62,7 +62,7 @@ declare class OpenCVWrapper extends NSObject {
         contourIdx: number,
         color: UIColor,
         thickness: number,
-		lineType: number,
+        lineType: number,
         hierarchy: OpenCVMat,
         maxLevel: number,
         offset: CGPoint
